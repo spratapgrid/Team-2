@@ -5,10 +5,7 @@ import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enti
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.service.ExternalCandidateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
@@ -33,5 +30,14 @@ public class ExternalCandidateController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CandidateResponse> getCandidateById(@PathVariable Long candidateId,
+                                                              @Valid @RequestBody ExternalCandidate updatedCandidate) {
+        CandidateResponse response =
+                externalCandidateService.updateCandidate(candidateId, updatedCandidate);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 }

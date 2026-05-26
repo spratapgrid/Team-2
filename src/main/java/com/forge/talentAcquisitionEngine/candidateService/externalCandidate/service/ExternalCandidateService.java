@@ -4,6 +4,7 @@ import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.repository.ExternalCandidateRepository;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.utility.HashUtil;
+import com.forge.talentAcquisitionEngine.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -57,5 +58,43 @@ public class ExternalCandidateService {
                 .duplicate(false)
                 .build();
 
+    }
+
+    public CandidateResponse updateCandidate(Long candidateId,ExternalCandidate candidate){
+
+        ExternalCandidate existingCandidate = externalCandidateRepository.findById(candidateId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND,"Candidate not found"));
+
+        // Update the candidate fields
+        existingCandidate.setFirstName(candidate.getFirstName());
+        existingCandidate.setLastName(candidate.getLastName());
+        existingCandidate.setDateOfBirth(candidate.getDateOfBirth());
+        existingCandidate.setGender(candidate.getGender());
+        existingCandidate.setAddress(candidate.getAddress());
+
+        existingCandidate.setTotalExperienceYears(candidate.getTotalExperienceYears());
+        existingCandidate.setTotalGapYears(candidate.getTotalGapYears());
+
+        existingCandidate.setSkills(candidate.getSkills());
+
+        existingCandidate.setCompanyName(candidate.getCompanyName());
+        existingCandidate.setDesignation(candidate.getDesignation());
+        existingCandidate.setCurrentCtc(candidate.getCurrentCtc());
+        existingCandidate.setExpectedCtc(candidate.getExpectedCtc());
+        existingCandidate.setNoticePeriodDays(candidate.getNoticePeriodDays());
+        existingCandidate.setWillingToRelocate(candidate.getWillingToRelocate());
+
+        existingCandidate.setFreeNotes(candidate.getFreeNotes());
+
+        existingCandidate.setEducationDetails(candidate.getEducationDetails());
+        existingCandidate.setCertificationDetails(candidate.getCertificationDetails());
+
+        externalCandidateRepository.save(existingCandidate);
+
+        return CandidateResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Candidate updated successfully")
+                .duplicate(false)
+                .build();
     }
 }
