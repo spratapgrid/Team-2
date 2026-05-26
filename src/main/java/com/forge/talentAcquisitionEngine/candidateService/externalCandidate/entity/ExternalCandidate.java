@@ -88,7 +88,7 @@ public class ExternalCandidate {
     @ElementCollection
     @CollectionTable(
             name = "candidate_skills",
-            joinColumns = @JoinColumn(name = "application_id")
+            joinColumns = @JoinColumn(name = "candidate_id")
     )
     @Column(name = "skill", nullable = false)
     private List<
@@ -139,12 +139,10 @@ public class ExternalCandidate {
     private List<CertificationDetail> certificationDetails;
 
     @Size(min = 64, max = 64, message = "Email hash must be 64 characters")
-    @Pattern(regexp = "^[a-fA-F0-9]{64}$", message = "Email hash must be a valid SHA-256 hash")
     @Column(name = "email_hash", unique = true)
     private String emailHash;
 
     @Size(min = 64, max = 64, message = "Phone hash must be 64 characters")
-    @Pattern(regexp = "^[a-fA-F0-9]{64}$", message = "Phone hash must be a valid SHA-256 hash")
     @Column(name = "phone_hash", unique = true)
     private String phoneHash;
 
