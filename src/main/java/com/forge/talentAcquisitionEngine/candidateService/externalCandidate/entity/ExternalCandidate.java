@@ -21,10 +21,10 @@ import java.util.List;
 @Table(
         name = "external_candidate",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_candidate_email", columnNames = "email"),
-                @UniqueConstraint(name = "uk_candidate_phone", columnNames = "phone_number"),
-                @UniqueConstraint(name = "uk_candidate_email_hash", columnNames = "email_hash"),
-                @UniqueConstraint(name = "uk_candidate_phone_hash", columnNames = "phone_hash")
+                @UniqueConstraint(name = "candidate_email", columnNames = "email"),
+                @UniqueConstraint(name = "candidate_phone", columnNames = "phone_number"),
+                @UniqueConstraint(name = "candidate_email_hash", columnNames = "email_hash"),
+                @UniqueConstraint(name = "candidate_phone_hash", columnNames = "phone_hash")
         }
 )
 @Getter
