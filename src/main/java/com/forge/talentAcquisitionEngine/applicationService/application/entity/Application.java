@@ -61,18 +61,6 @@ public class Application {
     private String resumeOriginalFilename;
 
 
-    @NotEmpty(message = "At least one skill is required")
-    @ElementCollection
-    @CollectionTable(
-            name = "candidate_skills",
-            joinColumns = @JoinColumn(name = "application_id")
-    )
-    @Column(name = "skill", nullable = false)
-    private List<
-            @NotBlank(message = "Skill cannot be blank")
-                    String
-            > skills;
-
     @ElementCollection
     @CollectionTable(
             name = "application_matched_skills",

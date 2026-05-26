@@ -84,6 +84,18 @@ public class ExternalCandidate {
     @Column(name = "total_gap_years")
     private Float totalGapYears;
 
+    @NotEmpty(message = "At least one skill is required")
+    @ElementCollection
+    @CollectionTable(
+            name = "candidate_skills",
+            joinColumns = @JoinColumn(name = "application_id")
+    )
+    @Column(name = "skill", nullable = false)
+    private List<
+            @NotBlank(message = "Skill cannot be blank")
+                    String
+            > skills;
+
     @Size(max = 100, message = "Company name must not exceed 100 characters")
     @Column(name = "company_name")
     private String companyName;
