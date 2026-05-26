@@ -8,6 +8,7 @@ import com.forge.talentAcquisitionEngine.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -94,6 +95,28 @@ public class ExternalCandidateService {
         return CandidateResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Candidate updated successfully")
+                .duplicate(false)
+                .build();
+    }
+
+    public ExternalCandidate getByCandidateId(Long candidateId) {
+
+        return externalCandidateRepository.findById(candidateId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Candidate not found" ));
+    }
+
+    public void deleteById(Long candidateId) {
+        ExternalCandidate existingCandidate = externalCandidateRepository.findById(candidateId)
+                .orElseThrow(() -> new BusinessException( HttpStatus.NOT_FOUND, "Candidate not found"));
+
+        existingCandidate.setIsDeleted(true);
+        existingCandidate.setDeletedAt(LocalDateTime.now());
+
+        externalCandidateRepository.save(existingCandidate);
+
+        CandidateResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Candidate deleted successfully")
                 .duplicate(false)
                 .build();
     }

@@ -21,8 +21,7 @@ public class ExternalCandidateController {
 
     @PostMapping
     public ResponseEntity<CandidateResponse> createCandidate(
-            @Valid @RequestBody ExternalCandidate candidate
-    ) {
+            @Valid @RequestBody ExternalCandidate candidate) {
         CandidateResponse response = externalCandidateService.createCandidate(candidate);
 
         if (Boolean.TRUE.equals(response.getDuplicate())) {
@@ -32,12 +31,24 @@ public class ExternalCandidateController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CandidateResponse> getCandidateById(@PathVariable Long candidateId,
-                                                              @Valid @RequestBody ExternalCandidate updatedCandidate) {
+    @PutMapping("/{candidateId}")
+    public ResponseEntity<CandidateResponse> updateCandidate(@PathVariable Long candidateId,
+                                                             @Valid @RequestBody ExternalCandidate updatedCandidate) {
         CandidateResponse response =
                 externalCandidateService.updateCandidate(candidateId, updatedCandidate);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/{candidateId}")
+    public ResponseEntity<ExternalCandidate> getCandidateById( @PathVariable Long candidateId ) {
+        ExternalCandidate candidate = externalCandidateService.getByCandidateId(candidateId);
+        return ResponseEntity.ok(candidate);
+    }
+
+    @DeleteMapping("/{candidateId}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long candidateId) {
+        externalCandidateService.deleteById(candidateId);
+        return ResponseEntity.noContent().build();
     }
 }
