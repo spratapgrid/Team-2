@@ -5,6 +5,7 @@ import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enti
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.repository.ExternalCandidateRepository;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.utility.HashUtil;
 import com.forge.talentAcquisitionEngine.exception.BusinessException;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class ExternalCandidateService {
         this.hashUtil = hashUtil;
     }
 
+    @Transactional
     public CandidateResponse createCandidate(ExternalCandidate candidate) {
 
         String email = candidate.getEmail().trim().toLowerCase();
@@ -36,20 +38,66 @@ public class ExternalCandidateService {
                         phoneHash
                 );
 
-        // Duplicate Candidate
         if (existingCandidate.isPresent()) {
 
-            return CandidateResponse.builder()
-                    .status(HttpStatus.CONFLICT.value())
-                    .message("Duplicate candidate found")
-                    .duplicate(true)
-                    .build();
+            ExternalCandidate existing = existingCandidate.get();
+
+            if (Boolean.TRUE.equals(existing.getBlockedFromReapply())) {
+                throw new BusinessException(
+                        HttpStatus.FORBIDDEN,
+                        "Candidate is blocked from reapplying"
+                );
+            }
+
+            if (Boolean.FALSE.equals(existing.getIsDeleted())) {
+                return CandidateResponse.builder()
+                        .status(HttpStatus.CONFLICT.value())
+                        .message("Duplicate candidate found")
+                        .duplicate(true)
+                        .build();
+            }
+
+            if (existing.getDeletedAt() == null) {
+                throw new BusinessException(
+                        HttpStatus.BAD_REQUEST,
+                        "Deleted date is missing for candidate"
+                );
+            }
+
+            LocalDateTime allowedReapplyDate =
+                    existing.getDeletedAt().plusMonths(6);
+
+            if (LocalDateTime.now().isBefore(allowedReapplyDate)) {
+                throw new BusinessException(
+                        HttpStatus.FORBIDDEN,
+                        "Candidate can reapply only after 6 months"
+                );
+            }
+
+            // After 6 months, old deleted data is anonymized
+            String suffix = existing.getCandidateId() + "_" + System.currentTimeMillis();
+
+            String deletedEmail = "deleted_" + suffix + "@deleted.com";
+            String deletedPhone = "9" + String.valueOf(System.currentTimeMillis()).substring(3, 12);
+
+            existing.setEmail(deletedEmail);
+            existing.setPhoneNumber(deletedPhone);
+            existing.setEmailHash(hashUtil.sha256(deletedEmail));
+            existing.setPhoneHash(hashUtil.sha256(deletedPhone));
+            existing.setPiiAnonymized(true);
+            existing.setPiiAnonymizedAt(LocalDateTime.now());
+
+            externalCandidateRepository.save(existing);
         }
 
         candidate.setEmail(email);
         candidate.setPhoneNumber(phone);
         candidate.setEmailHash(emailHash);
         candidate.setPhoneHash(phoneHash);
+        candidate.setIsDeleted(false);
+        candidate.setBlockedFromReapply(false);
+        candidate.setPiiAnonymized(false);
+        candidate.setGdprDeleteRequested(false);
 
         externalCandidateRepository.save(candidate);
 
@@ -58,12 +106,11 @@ public class ExternalCandidateService {
                 .message("Candidate created successfully")
                 .duplicate(false)
                 .build();
-
     }
 
     public CandidateResponse updateCandidate(Long candidateId,ExternalCandidate candidate){
 
-        ExternalCandidate existingCandidate = externalCandidateRepository.findById(candidateId)
+        ExternalCandidate existingCandidate = externalCandidateRepository.findByCandidateIdAndIsDeletedFalse(candidateId)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND,"Candidate not found"));
 
         // Update the candidate fields
@@ -100,24 +147,24 @@ public class ExternalCandidateService {
     }
 
     public ExternalCandidate getByCandidateId(Long candidateId) {
-
-        return externalCandidateRepository.findById(candidateId)
-                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Candidate not found" ));
+        return externalCandidateRepository.findByCandidateIdAndIsDeletedFalse(candidateId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Candidate not found"));
     }
 
     public void deleteById(Long candidateId) {
-        ExternalCandidate existingCandidate = externalCandidateRepository.findById(candidateId)
-                .orElseThrow(() -> new BusinessException( HttpStatus.NOT_FOUND, "Candidate not found"));
+
+        ExternalCandidate existingCandidate =
+                externalCandidateRepository.findByCandidateIdAndIsDeletedFalse(candidateId)
+                        .orElseThrow(() ->
+                                new BusinessException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Candidate not found"
+                                ));
 
         existingCandidate.setIsDeleted(true);
         existingCandidate.setDeletedAt(LocalDateTime.now());
+        existingCandidate.setBlockedFromReapply(false);
 
         externalCandidateRepository.save(existingCandidate);
-
-        CandidateResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message("Candidate deleted successfully")
-                .duplicate(false)
-                .build();
     }
 }

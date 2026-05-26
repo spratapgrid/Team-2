@@ -85,12 +85,6 @@ public class ExternalCandidate {
     private Float totalGapYears;
 
     @NotEmpty(message = "At least one skill is required")
-    @ElementCollection
-    @CollectionTable(
-            name = "candidate_skills",
-            joinColumns = @JoinColumn(name = "candidate_id")
-    )
-    @Column(name = "skill", nullable = false)
     private List<
             @NotBlank(message = "Skill cannot be blank")
                     String

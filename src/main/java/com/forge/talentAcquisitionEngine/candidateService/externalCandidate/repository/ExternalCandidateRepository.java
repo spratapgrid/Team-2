@@ -12,8 +12,5 @@ public interface ExternalCandidateRepository extends JpaRepository<ExternalCandi
             String phoneHash
     );
 
-    boolean existsByEmailHashOrPhoneHash(
-            String emailHash,
-            String phoneHash
-    );
+    Optional<ExternalCandidate> findByCandidateIdAndIsDeletedFalse(Long candidateId);
 }
