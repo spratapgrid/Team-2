@@ -139,11 +139,11 @@ public class ExternalCandidate {
     private List<CertificationDetail> certificationDetails;
 
     @Size(min = 64, max = 64, message = "Email hash must be 64 characters")
-    @Column(name = "email_hash", unique = true)
+    @Column(name = "email_hash", unique = true,nullable = false)
     private String emailHash;
 
     @Size(min = 64, max = 64, message = "Phone hash must be 64 characters")
-    @Column(name = "phone_hash", unique = true)
+    @Column(name = "phone_hash", unique = true,nullable = false)
     private String phoneHash;
 
     @CreationTimestamp
