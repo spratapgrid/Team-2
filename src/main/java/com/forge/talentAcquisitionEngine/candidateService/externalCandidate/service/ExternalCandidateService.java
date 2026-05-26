@@ -43,6 +43,7 @@ public class ExternalCandidateService {
                     .duplicate(true)
                     .build();
         }
+
         candidate.setEmail(email);
         candidate.setPhoneNumber(phone);
         candidate.setEmailHash(emailHash);
