@@ -1,4 +1,4 @@
-package com.forge.talentAcquisitionEngine.candidateService.aiengine.controller;
+package com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
