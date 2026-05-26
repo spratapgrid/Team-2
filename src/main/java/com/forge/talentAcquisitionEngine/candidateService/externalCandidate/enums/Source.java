@@ -1,4 +1,4 @@
-package com.forge.talentAcquisitionEngine.externalCandidate.enums;
+package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enums;
 
 public enum Source {
     LINKEDIN,

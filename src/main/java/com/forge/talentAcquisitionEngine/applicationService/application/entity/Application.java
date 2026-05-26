@@ -1,0 +1,206 @@
+package com.forge.talentAcquisitionEngine.applicationService.application.entity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.forge.talentAcquisitionEngine.applicationService.application.enums.Stage;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enums.Source;
+//import com.forge.talentAcquisitionEngine.demandService.demand.entity.Demand;
+import com.forge.talentAcquisitionEngine.interviewService.interview.entity.Interview;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.URL;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+@Setter
+@Entity
+@Table(
+        name = "application",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "candidate_demand_unique",
+                        columnNames = {"candidate_id", "demand_id"}
+                )
+        }
+)
+public class Application {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "application_id")
+    private Long id;
+
+    @NotNull(message = "Candidate is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "candidate_id", nullable = false)
+    private ExternalCandidate candidate;
+
+//    @NotNull(message = "Demand is required")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "demand_id", nullable = false)
+//    private Demand demand;
+
+    @NotNull(message = "Source is required")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "source", nullable = false)
+    private Source source;
+
+    @NotBlank(message = "Resume file path is required")
+    @Size(max = 500, message = "Resume file path must not exceed 500 characters")
+    @Column(name = "resume_file_path", nullable = false, length = 500)
+    private String resumeFilePath;
+
+    @NotBlank(message = "Original resume filename is required")
+    @Size(max = 255, message = "Original filename must not exceed 255 characters")
+    @Column(name = "resume_original_filename", nullable = false, length = 255)
+    private String resumeOriginalFilename;
+
+
+    @NotEmpty(message = "At least one skill is required")
+    @ElementCollection
+    @CollectionTable(
+            name = "candidate_skills",
+            joinColumns = @JoinColumn(name = "application_id")
+    )
+    @Column(name = "skill", nullable = false)
+    private List<
+            @NotBlank(message = "Skill cannot be blank")
+                    String
+            > skills;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "application_matched_skills",
+            joinColumns = @JoinColumn(name = "application_id")
+    )
+    @Column(name = "skill", length = 50)
+    private List<
+            @NotBlank(message = "Matched skill cannot be blank")
+                    String
+            > matchedSkills;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "application_missing_skills",
+            joinColumns = @JoinColumn(name = "application_id")
+    )
+    @Column(name = "skill", length = 50)
+    private List<
+            @NotBlank(message = "Missing skill cannot be blank")
+                    String
+            > missingSkills;
+
+    @NotBlank(message = "AI rationale is required")
+    @Size(min = 30, max = 300, message = "AI rationale must be between 30 and 300 characters")
+    @Column(name = "ai_rationale", columnDefinition = "TEXT")
+    private String aiRationale;
+
+    @Size(max = 100, message = "Free notes must not exceed 100 characters")
+    @Column(name = "free_notes", columnDefinition = "TEXT")
+    private String freeNotes;
+
+
+    @NotNull(message = "Current stage is required")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "current_stage", nullable = false)
+    private Stage currentStage;
+
+    @NotNull(message = "AI score is required")
+    @Min(value = 0, message = "AI score must be at least 0")
+    @Max(value = 100, message = "AI score must not exceed 100")
+    @Column(name = "ai_score", nullable = false)
+    private Integer aiScore;
+
+    @Size(max = 500, message = "Stage move reason must not exceed 500 characters")
+    @Column(name = "stage_move_reason", columnDefinition = "TEXT")
+    private String stageMoveReason;
+
+    @CreationTimestamp
+    @Column(name = "applied_at", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime appliedAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "screening_at")
+    private LocalDateTime screeningAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "technical_at")
+    private LocalDateTime technicalAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "interview_at")
+    private LocalDateTime interviewAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "final_round_at")
+    private LocalDateTime finalRoundAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "offer_at")
+    private LocalDateTime offerAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "hired_at")
+    private LocalDateTime hiredAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "rejected_at")
+    private LocalDateTime rejectedAt;
+
+    @Size(max = 100, message = "Rejection reason must not exceed 100 characters")
+    @Column(name = "rejection_reason", length = 100)
+    private String rejectionReason;
+
+    @Size(max = 50, message = "Referral code must not exceed 50 characters")
+    @Column(name = "referral_code", length = 50)
+    private String referralCode;
+
+    @OneToMany(mappedBy = "application")
+    private List<Interview> interviews;
+
+    @PrePersist
+    private void onCreate() {
+        if (this.currentStage == null) {
+            this.currentStage = Stage.APPLIED;
+        }
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (Stage.SCREENING.equals(this.currentStage) && this.screeningAt == null) {
+            this.screeningAt = now;
+        }
+
+        if (Stage.TECHNICAL.equals(this.currentStage) && this.technicalAt == null) {
+            this.technicalAt = now;
+        }
+
+        if (Stage.INTERVIEW.equals(this.currentStage) && this.interviewAt == null) {
+            this.interviewAt = now;
+        }
+
+        if (Stage.FINAL_ROUND.equals(this.currentStage) && this.finalRoundAt == null) {
+            this.finalRoundAt = now;
+        }
+
+        if (Stage.OFFERED.equals(this.currentStage) && this.offerAt == null) {
+            this.offerAt = now;
+        }
+
+        if (Stage.HIRED.equals(this.currentStage) && this.hiredAt == null) {
+            this.hiredAt = now;
+        }
+
+        if (Stage.REJECTED.equals(this.currentStage) && this.rejectedAt == null) {
+            this.rejectedAt = now;
+        }
+    }
+}

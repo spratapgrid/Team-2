@@ -1,4 +1,4 @@
-package com.forge.talentAcquisitionEngine.offer.enums;
+package com.forge.talentAcquisitionEngine.offerService.offer.enums;
 
 public enum Status {
     DRAFT,
@@ -7,5 +7,5 @@ public enum Status {
     SENT,
     SIGNED,
     REJECTED,
-    EXPIRED;
+    EXPIRED,
 }

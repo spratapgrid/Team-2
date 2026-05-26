@@ -1,29 +1,22 @@
-services:
+version: '3.8'
 
-  #1 Database
-  Postgres:
-    image: postgres:14.22-trixie
-    container_name: forge_db
+services:
+  postgres-tae:
+    image: ankane/pgvector:v0.5.1
+    container_name: forge-postgres-tae
     environment:
-      POSTGRES_USER: ${DB_USER:-user}
-      POSTGRES_PASSWORD: ${DB_PASS:-password}
-      POSTGRES_DB: forge_db
+      POSTGRES_DB: forge_tae
+      POSTGRES_USER: forge_user
+      POSTGRES_PASSWORD: forge_password
     ports:
       - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forge_user -d forge_tae"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  #2 Backend
-  Backend:
-    image: springboot/8-jdk-alpine-maven
-    container_name: forge_backend
-    ports:
-      - "8080:8080"
-      - "5005:5005" #for debugging
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/forge_db
-
-  #Frontend
-  Frontend:
-    image: openeuler/react
-    container_name: forge_frontend
-    ports:
-      - "3000:3000"
+volumes:
+  db_data:

@@ -1,4 +1,4 @@
-package com.forge.talentAcquisitionEngine.interview.enums;
+package com.forge.talentAcquisitionEngine.interviewService.interview.enums;
 
 public enum Status {
     SCHEDULED,

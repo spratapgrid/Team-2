@@ -1,4 +1,4 @@
-package com.forge.talentAcquisitionEngine.application.enums;
+package com.forge.talentAcquisitionEngine.applicationService.application.enums;
 
 public enum Stage {
     APPLIED,
@@ -6,7 +6,7 @@ public enum Stage {
     TECHNICAL,
     INTERVIEW,
     FINAL_ROUND,
-    OFFER,
+    OFFERED,
     HIRED,
     REJECTED
 }
