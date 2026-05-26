@@ -5,15 +5,16 @@ import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enti
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.service.ExternalCandidateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 
+@Controller
 public class ExternalCandidateController {
 
     private final ExternalCandidateService externalCandidateService;
-
 
     public ExternalCandidateController(ExternalCandidateService externalCandidateService) {
         this.externalCandidateService = externalCandidateService;
