@@ -24,8 +24,8 @@ public class ExternalCandidateService {
 
     public CandidateResponse createCandidate(ExternalCandidate candidate) {
 
-        String email = candidate.getEmail() == null ? null : candidate.getEmail().trim().toLowerCase();
-        String phone = candidate.getPhoneNumber() == null ? null : candidate.getPhoneNumber().trim();
+        String email = candidate.getEmail().trim().toLowerCase();
+        String phone = candidate.getPhoneNumber().trim();
 
         String emailHash = hashUtil.sha256(email);
         String phoneHash = hashUtil.sha256(phone);
