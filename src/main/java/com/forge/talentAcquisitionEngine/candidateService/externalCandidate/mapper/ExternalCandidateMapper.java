@@ -1,533 +1,197 @@
 package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.mapper;
 
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.CertificateDetailDto;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.EducationDetailDto;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.ExternalCandidateDto;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.CertificationDetail;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.EducationDetail;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.SkillDetail;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExternalCandidateMapper {
 
-  private ExternalCandidateMapper() {
-  }
-
-  public static ExternalCandidate dtoToEntity(
-      ExternalCandidateDto dto
-  ) {
-
-    if (dto == null) {
-      return null;
+    private ExternalCandidateMapper() {
     }
 
-    ExternalCandidate entity =
-        new ExternalCandidate();
+    public static ExternalCandidate dtoToEntity(ExternalCandidateDto dto) {
+        if (dto == null) {
+            return null;
+        }
 
-    entity.setCandidateId(
-        dto.getCandidateId()
-    );
+        ExternalCandidate entity = new ExternalCandidate();
 
-    entity.setFirstName(
-        dto.getFirstName()
-    );
+        entity.setCandidateId(dto.getCandidateId());
+        entity.setFirstName(dto.getFirstName());
+        entity.setLastName(dto.getLastName());
+        entity.setEmail(dto.getEmail());
+        entity.setPhoneNumber(dto.getPhoneNumber());
+        entity.setDateOfBirth(dto.getDateOfBirth());
+        entity.setGender(dto.getGender());
+        entity.setAddress(dto.getAddress());
+        entity.setTotalExperienceYears(dto.getTotalExperienceYears());
+        entity.setTotalGapYears(dto.getTotalGapYears());
+        entity.setCompanyName(dto.getCompanyName());
+        entity.setDesignation(dto.getDesignation());
+        entity.setCurrentCtc(dto.getCurrentCtc());
+        entity.setExpectedCtc(dto.getExpectedCtc());
+        entity.setNoticePeriodDays(dto.getNoticePeriodDays());
+        entity.setWillingToRelocate(dto.getWillingToRelocate());
+        entity.setFreeNotes(dto.getFreeNotes());
+        entity.setSource(dto.getSource());
 
-    entity.setLastName(
-        dto.getLastName()
-    );
+        if (dto.getSkills() != null && !dto.getSkills().isEmpty()) {
+            List<SkillDetail> skills = dto.getSkills()
+                    .stream()
+                    .map(skillName -> {
+                        SkillDetail skill = new SkillDetail();
+                        skill.setSkillName(skillName);
+                        skill.setCandidate(entity);
+                        return skill;
+                    })
+                    .collect(Collectors.toList());
 
-    entity.setEmail(
-        dto.getEmail()
-    );
+            entity.setSkills(skills);
+        }
 
-    entity.setPhoneNumber(
-        dto.getPhoneNumber()
-    );
+        if (dto.getEducationDetails() != null && !dto.getEducationDetails().isEmpty()) {
+            List<EducationDetail> educationDetails = dto.getEducationDetails()
+                    .stream()
+                    .map(ExternalCandidateMapper::educationDtoToEntity)
+                    .peek(education -> education.setCandidate(entity))
+                    .collect(Collectors.toList());
 
-    entity.setDateOfBirth(
-        dto.getDateOfBirth()
-    );
+            entity.setEducationDetails(educationDetails);
+        }
 
-    entity.setGender(
-        dto.getGender()
-    );
+        if (dto.getCertificationDetails() != null && !dto.getCertificationDetails().isEmpty()) {
+            List<CertificationDetail> certificationDetails = dto.getCertificationDetails()
+                    .stream()
+                    .map(ExternalCandidateMapper::certificationDtoToEntity)
+                    .peek(certification -> certification.setCandidate(entity))
+                    .collect(Collectors.toList());
 
-    entity.setAddress(
-        dto.getAddress()
-    );
+            entity.setCertificationDetails(certificationDetails);
+        }
 
-    entity.setTotalExperienceYears(
-        dto.getTotalExperienceYears()
-    );
-
-    entity.setTotalGapYears(
-        dto.getTotalGapYears()
-    );
-
-    entity.setSkills(
-        dto.getSkills()
-    );
-
-    entity.setCompanyName(
-        dto.getCompanyName()
-    );
-
-    entity.setDesignation(
-        dto.getDesignation()
-    );
-
-    entity.setCurrentCtc(
-        dto.getCurrentCtc()
-    );
-
-    entity.setExpectedCtc(
-        dto.getExpectedCtc()
-    );
-
-    entity.setNoticePeriodDays(
-        dto.getNoticePeriodDays()
-    );
-
-    entity.setWillingToRelocate(
-        dto.getWillingToRelocate()
-    );
-
-    entity.setFreeNotes(
-        dto.getFreeNotes()
-    );
-
-    entity.setSource(
-        dto.getSource()
-    );
-
-    if (dto.getEducationDetails() != null) {
-
-      List<ExternalCandidate.EducationDetail>
-          educationDetails =
-          dto.getEducationDetails()
-              .stream()
-              .map(
-                  ExternalCandidateMapper::
-                      educationDtoToEntity
-              )
-              .collect(Collectors.toList());
-
-      entity.setEducationDetails(
-          educationDetails
-      );
+        return entity;
     }
 
-    if (dto.getCertificationDetails() != null) {
+    public static ExternalCandidateDto entityToDto(ExternalCandidate entity) {
+        if (entity == null) {
+            return null;
+        }
 
-      List<ExternalCandidate.CertificationDetail>
-          certificationDetails =
-          dto.getCertificationDetails()
-              .stream()
-              .map(
-                  ExternalCandidateMapper::
-                      certificationDtoToEntity
-              )
-              .collect(Collectors.toList());
+        ExternalCandidateDto dto = new ExternalCandidateDto();
 
-      entity.setCertificationDetails(
-          certificationDetails
-      );
+        dto.setCandidateId(entity.getCandidateId());
+        dto.setFirstName(entity.getFirstName());
+        dto.setLastName(entity.getLastName());
+        dto.setEmail(entity.getEmail());
+        dto.setPhoneNumber(entity.getPhoneNumber());
+        dto.setDateOfBirth(entity.getDateOfBirth());
+        dto.setGender(entity.getGender());
+        dto.setAddress(entity.getAddress());
+        dto.setTotalExperienceYears(entity.getTotalExperienceYears());
+        dto.setTotalGapYears(entity.getTotalGapYears());
+        dto.setCompanyName(entity.getCompanyName());
+        dto.setDesignation(entity.getDesignation());
+        dto.setCurrentCtc(entity.getCurrentCtc());
+        dto.setExpectedCtc(entity.getExpectedCtc());
+        dto.setNoticePeriodDays(entity.getNoticePeriodDays());
+        dto.setWillingToRelocate(entity.getWillingToRelocate());
+        dto.setFreeNotes(entity.getFreeNotes());
+        dto.setSource(entity.getSource());
+
+        if (entity.getSkills() != null && !entity.getSkills().isEmpty()) {
+            dto.setSkills(
+                    entity.getSkills()
+                            .stream()
+                            .map(SkillDetail::getSkillName)
+                            .collect(Collectors.toList())
+            );
+        }
+
+        if (entity.getEducationDetails() != null && !entity.getEducationDetails().isEmpty()) {
+            dto.setEducationDetails(
+                    entity.getEducationDetails()
+                            .stream()
+                            .map(ExternalCandidateMapper::educationEntityToDto)
+                            .collect(Collectors.toList())
+            );
+        }
+
+        if (entity.getCertificationDetails() != null && !entity.getCertificationDetails().isEmpty()) {
+            dto.setCertificationDetails(
+                    entity.getCertificationDetails()
+                            .stream()
+                            .map(ExternalCandidateMapper::certificationEntityToDto)
+                            .collect(Collectors.toList())
+            );
+        }
+
+        return dto;
     }
 
-    entity.setEmailHash(
-        dto.getEmailHash()
-    );
+    private static EducationDetail educationDtoToEntity(EducationDetailDto dto) {
+        if (dto == null) {
+            return null;
+        }
 
-    entity.setPhoneHash(
-        dto.getPhoneHash()
-    );
+        EducationDetail entity = new EducationDetail();
+        entity.setDegree(dto.getDegree());
+        entity.setSpecialization(dto.getSpecialization());
+        entity.setInstitutionName(dto.getInstitutionName());
+        entity.setStartYear(dto.getStartYear());
+        entity.setEndYear(dto.getEndYear());
+        entity.setPercentage(dto.getPercentage());
 
-    entity.setCreatedAt(
-        dto.getCreatedAt()
-    );
-
-    entity.setIsDeleted(
-        dto.getIsDeleted()
-    );
-
-    entity.setDeletedAt(
-        dto.getDeletedAt()
-    );
-
-    entity.setDeletedBy(
-        dto.getDeletedBy()
-    );
-
-    entity.setDeleteReason(
-        dto.getDeleteReason()
-    );
-
-    entity.setPiiAnonymized(
-        dto.getPiiAnonymized()
-    );
-
-    entity.setPiiAnonymizedAt(
-        dto.getPiiAnonymizedAt()
-    );
-
-    entity.setGdprDeleteRequested(
-        dto.getGdprDeleteRequested()
-    );
-
-    entity.setGdprDeleteRequestedAt(
-        dto.getGdprDeleteRequestedAt()
-    );
-
-    entity.setGdprDeleteDueAt(
-        dto.getGdprDeleteDueAt()
-    );
-
-    entity.setBlockedFromReapply(
-        dto.getBlockedFromReapply()
-    );
-
-    entity.setUpdatedAt(
-        dto.getUpdatedAt()
-    );
-
-    return entity;
-  }
-
-  public static ExternalCandidateDto entityToDto(
-      ExternalCandidate entity
-  ) {
-
-    if (entity == null) {
-      return null;
+        return entity;
     }
 
-    ExternalCandidateDto dto =
-        new ExternalCandidateDto();
+    private static EducationDetailDto educationEntityToDto(EducationDetail entity) {
+        if (entity == null) {
+            return null;
+        }
 
-    dto.setCandidateId(
-        entity.getCandidateId()
-    );
+        EducationDetailDto dto = new EducationDetailDto();
+        dto.setDegree(entity.getDegree());
+        dto.setSpecialization(entity.getSpecialization());
+        dto.setInstitutionName(entity.getInstitutionName());
+        dto.setStartYear(entity.getStartYear());
+        dto.setEndYear(entity.getEndYear());
+        dto.setPercentage(entity.getPercentage());
 
-    dto.setFirstName(
-        entity.getFirstName()
-    );
-
-    dto.setLastName(
-        entity.getLastName()
-    );
-
-    dto.setEmail(
-        entity.getEmail()
-    );
-
-    dto.setPhoneNumber(
-        entity.getPhoneNumber()
-    );
-
-    dto.setDateOfBirth(
-        entity.getDateOfBirth()
-    );
-
-    dto.setGender(
-        entity.getGender()
-    );
-
-    dto.setAddress(
-        entity.getAddress()
-    );
-
-    dto.setTotalExperienceYears(
-        entity.getTotalExperienceYears()
-    );
-
-    dto.setTotalGapYears(
-        entity.getTotalGapYears()
-    );
-
-    dto.setSkills(
-        entity.getSkills()
-    );
-
-    dto.setCompanyName(
-        entity.getCompanyName()
-    );
-
-    dto.setDesignation(
-        entity.getDesignation()
-    );
-
-    dto.setCurrentCtc(
-        entity.getCurrentCtc()
-    );
-
-    dto.setExpectedCtc(
-        entity.getExpectedCtc()
-    );
-
-    dto.setNoticePeriodDays(
-        entity.getNoticePeriodDays()
-    );
-
-    dto.setWillingToRelocate(
-        entity.getWillingToRelocate()
-    );
-
-    dto.setFreeNotes(
-        entity.getFreeNotes()
-    );
-
-    dto.setSource(
-        entity.getSource()
-    );
-
-    if (entity.getEducationDetails() != null) {
-
-      List<ExternalCandidateDto.EducationDetailDto>
-          educationDetailDtos =
-          entity.getEducationDetails()
-              .stream()
-              .map(
-                  ExternalCandidateMapper::
-                      educationEntityToDto
-              )
-              .collect(Collectors.toList());
-
-      dto.setEducationDetails(
-          educationDetailDtos
-      );
+        return dto;
     }
 
-    if (entity.getCertificationDetails() != null) {
+    private static CertificationDetail certificationDtoToEntity(CertificateDetailDto dto) {
+        if (dto == null) {
+            return null;
+        }
 
-      List<ExternalCandidateDto.CertificationDetailDto>
-          certificationDetailDtos =
-          entity.getCertificationDetails()
-              .stream()
-              .map(
-                  ExternalCandidateMapper::
-                      certificationEntityToDto
-              )
-              .collect(Collectors.toList());
+        CertificationDetail entity = new CertificationDetail();
+        entity.setCertificateName(dto.getCertificateName());
+        entity.setIssuingOrganization(dto.getIssuingOrganization());
+        entity.setIssuedDate(dto.getIssuedDate());
+        entity.setCredentialUrl(dto.getCredentialUrl());
 
-      dto.setCertificationDetails(
-          certificationDetailDtos
-      );
+        return entity;
     }
 
-    dto.setEmailHash(
-        entity.getEmailHash()
-    );
+    private static CertificateDetailDto certificationEntityToDto(CertificationDetail entity) {
+        if (entity == null) {
+            return null;
+        }
 
-    dto.setPhoneHash(
-        entity.getPhoneHash()
-    );
+        CertificateDetailDto dto = new CertificateDetailDto();
+        dto.setCertificateName(entity.getCertificateName());
+        dto.setIssuingOrganization(entity.getIssuingOrganization());
+        dto.setIssuedDate(entity.getIssuedDate());
+        dto.setCredentialUrl(entity.getCredentialUrl());
 
-    dto.setCreatedAt(
-        entity.getCreatedAt()
-    );
-
-    dto.setIsDeleted(
-        entity.getIsDeleted()
-    );
-
-    dto.setDeletedAt(
-        entity.getDeletedAt()
-    );
-
-    dto.setDeletedBy(
-        entity.getDeletedBy()
-    );
-
-    dto.setDeleteReason(
-        entity.getDeleteReason()
-    );
-
-    dto.setPiiAnonymized(
-        entity.getPiiAnonymized()
-    );
-
-    dto.setPiiAnonymizedAt(
-        entity.getPiiAnonymizedAt()
-    );
-
-    dto.setGdprDeleteRequested(
-        entity.getGdprDeleteRequested()
-    );
-
-    dto.setGdprDeleteRequestedAt(
-        entity.getGdprDeleteRequestedAt()
-    );
-
-    dto.setGdprDeleteDueAt(
-        entity.getGdprDeleteDueAt()
-    );
-
-    dto.setBlockedFromReapply(
-        entity.getBlockedFromReapply()
-    );
-
-    dto.setUpdatedAt(
-        entity.getUpdatedAt()
-    );
-
-    return dto;
-  }
-
-
-  private static ExternalCandidate.EducationDetail
-  educationDtoToEntity(
-      ExternalCandidateDto.EducationDetailDto dto
-  ) {
-
-    if (dto == null) {
-      return null;
+        return dto;
     }
-
-    ExternalCandidate.EducationDetail entity =
-        new ExternalCandidate.EducationDetail();
-
-    entity.setDegree(
-        dto.getDegree()
-    );
-
-    entity.setSpecialization(
-        dto.getSpecialization()
-    );
-
-    entity.setInstitutionName(
-        dto.getInstitutionName()
-    );
-
-    entity.setStartYear(
-        dto.getStartYear()
-    );
-
-    entity.setEndYear(
-        dto.getEndYear()
-    );
-
-    entity.setPercentage(
-        dto.getPercentage()
-    );
-
-    return entity;
-  }
-
-
-  private static ExternalCandidateDto.EducationDetailDto
-  educationEntityToDto(
-      ExternalCandidate.EducationDetail entity
-  ) {
-
-    if (entity == null) {
-      return null;
-    }
-
-    ExternalCandidateDto.EducationDetailDto dto =
-        new ExternalCandidateDto.EducationDetailDto();
-
-    dto.setDegree(
-        entity.getDegree()
-    );
-
-    dto.setSpecialization(
-        entity.getSpecialization()
-    );
-
-    dto.setInstitutionName(
-        entity.getInstitutionName()
-    );
-
-    dto.setStartYear(
-        entity.getStartYear()
-    );
-
-    dto.setEndYear(
-        entity.getEndYear()
-    );
-
-    dto.setPercentage(
-        entity.getPercentage()
-    );
-
-    return dto;
-  }
-
-
-  private static ExternalCandidate.CertificationDetail
-  certificationDtoToEntity(
-      ExternalCandidateDto.CertificationDetailDto dto
-  ) {
-
-    if (dto == null) {
-      return null;
-    }
-
-    ExternalCandidate.CertificationDetail entity =
-        new ExternalCandidate.CertificationDetail();
-
-    entity.setCertificateName(
-        dto.getCertificateName()
-    );
-
-    entity.setIssuingOrganization(
-        dto.getIssuingOrganization()
-    );
-
-    entity.setIssuedDate(
-        dto.getIssuedDate()
-    );
-
-    entity.setExpiryDate(
-        dto.getExpiryDate()
-    );
-
-    entity.setCredentialId(
-        dto.getCredentialId()
-    );
-
-    entity.setCredentialUrl(
-        dto.getCredentialUrl()
-    );
-
-    return entity;
-  }
-
-
-  private static ExternalCandidateDto.CertificationDetailDto
-  certificationEntityToDto(
-      ExternalCandidate.CertificationDetail entity
-  ) {
-
-    if (entity == null) {
-      return null;
-    }
-
-    ExternalCandidateDto.CertificationDetailDto dto =
-        new ExternalCandidateDto.CertificationDetailDto();
-
-    dto.setCertificateName(
-        entity.getCertificateName()
-    );
-
-    dto.setIssuingOrganization(
-        entity.getIssuingOrganization()
-    );
-
-    dto.setIssuedDate(
-        entity.getIssuedDate()
-    );
-
-    dto.setExpiryDate(
-        entity.getExpiryDate()
-    );
-
-    dto.setCredentialId(
-        entity.getCredentialId()
-    );
-
-    dto.setCredentialUrl(
-        entity.getCredentialUrl()
-    );
-
-    return dto;
-  }
 }

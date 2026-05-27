@@ -1,18 +1,43 @@
 package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.repository;
 
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-@Repository
 public interface ExternalCandidateRepository extends JpaRepository<ExternalCandidate, Long> {
 
-    Optional<ExternalCandidate> findByEmailHashOrPhoneHash(
-            String emailHash,
-            String phoneHash
+    @Query("""
+            SELECT c FROM ExternalCandidate c
+            WHERE c.isDeleted = false
+            AND (c.emailHash = :emailHash OR c.phoneHash = :phoneHash)
+            """)
+    Optional<ExternalCandidate> findActiveDuplicate(
+            @Param("emailHash") String emailHash,
+            @Param("phoneHash") String phoneHash
+    );
+
+    @Query("""
+            SELECT c FROM ExternalCandidate c
+            WHERE c.isDeleted = false
+            AND c.candidateId <> :candidateId
+            AND (c.emailHash = :emailHash OR c.phoneHash = :phoneHash)
+            """)
+    Optional<ExternalCandidate> findDuplicateForUpdate(
+            @Param("candidateId") Long candidateId,
+            @Param("emailHash") String emailHash,
+            @Param("phoneHash") String phoneHash
     );
 
     Optional<ExternalCandidate> findByCandidateIdAndIsDeletedFalse(Long candidateId);
+
+    @EntityGraph(attributePaths = {
+            "skills",
+            "educationDetails",
+            "certificationDetails"
+    })
+    Optional<ExternalCandidate> findWithDetailsByCandidateIdAndIsDeletedFalse(Long candidateId);
 }

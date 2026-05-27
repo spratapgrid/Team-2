@@ -20,7 +20,7 @@ public class ApplicationDto {
   private Long candidateId;
 
 //    @NotNull(message = "Demand id is required")
-//    private Long demandId;
+//    private Demand demandId;
 
   @NotNull(message = "Source is required")
   private Source source;

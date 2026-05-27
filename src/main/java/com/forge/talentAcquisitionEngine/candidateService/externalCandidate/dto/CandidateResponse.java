@@ -1,8 +1,6 @@
 package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto;
 
-
 import lombok.*;
-
 
 @Getter
 @Setter
