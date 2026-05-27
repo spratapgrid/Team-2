@@ -37,7 +37,7 @@ public class Application {
 
     @NotNull(message = "Candidate is required")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "candidate_id", nullable = false)
+    @JoinColumn(name = "candidate_id", nullable = false )
     private ExternalCandidate candidate;
 
 //    @NotNull(message = "Demand is required")
@@ -151,6 +151,9 @@ public class Application {
 
     @OneToMany(mappedBy = "application")
     private List<Interview> interviews;
+    @NotNull
+    @Column(name = "blocked_from_reapply", nullable = false)
+    private Boolean blockedFromReapply = false;
 
     @PrePersist
     private void onCreate() {

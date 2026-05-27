@@ -3,18 +3,16 @@ package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.ent
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enums.Source;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.type.SqlTypes;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -84,11 +82,8 @@ public class ExternalCandidate {
     @Column(name = "total_gap_years")
     private Float totalGapYears;
 
-    @NotEmpty(message = "At least one skill is required")
-    private List<
-            @NotBlank(message = "Skill cannot be blank")
-                    String
-            > skills;
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SkillDetail> skill = new ArrayList<>();
 
     @Size(max = 100, message = "Company name must not exceed 100 characters")
     @Column(name = "company_name")
@@ -122,14 +117,10 @@ public class ExternalCandidate {
     @Column(name = "source", nullable = false)
     private Source source;
 
-    @Valid
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "education_details", columnDefinition = "jsonb")
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EducationDetail> educationDetails;
 
-    @Valid
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "certification_details", columnDefinition = "jsonb")
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CertificationDetail> certificationDetails;
 
     @Size(min = 64, max = 64, message = "Email hash must be 64 characters")
@@ -181,67 +172,10 @@ public class ExternalCandidate {
     @Column(name = "gdpr_delete_due_at")
     private LocalDateTime gdprDeleteDueAt;
 
-    @NotNull
-    @Column(name = "blocked_from_reapply", nullable = false)
-    private Boolean blockedFromReapply = false;
 
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
-    @Getter
-    @Setter
-    public static class EducationDetail {
-
-        @NotBlank(message = "Degree is required")
-        @Size(max = 100)
-        private String degree;
-
-        @NotBlank(message = "Specialization is required")
-        @Size(max = 100)
-        private String specialization;
-
-        @NotBlank(message = "Institution name is required")
-        @Size(max = 150)
-        private String institutionName;
-
-        @JsonFormat(pattern = "yyyy")
-        private Integer startYear;
-
-        @JsonFormat(pattern = "yyyy")
-        private Integer endYear;
-
-        @DecimalMin(value = "0.0", message = "Percentage cannot be negative")
-        @DecimalMax(value = "100.0", message = "Percentage must not exceed 100")
-        private Float percentage;
-
-    }
-
-
-    @Getter
-    @Setter
-    public static class CertificationDetail {
-
-        @NotBlank(message = "Certificate name is required")
-        @Size(max = 150)
-        private String certificateName;
-
-        @NotBlank(message = "Issuing organization is required")
-        @Size(max = 150)
-        private String issuingOrganization;
-
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate issuedDate;
-
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate expiryDate;
-
-        @Size(max = 100)
-        private String credentialId;
-
-        @Size(max = 500)
-        private String credentialUrl;
-    }
 }
