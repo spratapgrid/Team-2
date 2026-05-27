@@ -181,9 +181,6 @@ public class ExternalCandidate {
     @Column(name = "gdpr_delete_due_at")
     private LocalDateTime gdprDeleteDueAt;
 
-    @NotNull
-    @Column(name = "blocked_from_reapply", nullable = false)
-    private Boolean blockedFromReapply = false;
 
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
