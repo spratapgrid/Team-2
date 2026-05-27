@@ -23,7 +23,7 @@ public class AiEngineFileController {
 
 
     @PostMapping
-    public ResponseEntity<String> parseAndSaveResume(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> saveResume(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
         }
