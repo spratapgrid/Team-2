@@ -134,7 +134,14 @@
 			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <!--- Google Cloud Storage dependency for file uploads to GCS -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+            <version>2.48.0</version>
+            <!-- Replace with latest stable version -->
+        </dependency>
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>
