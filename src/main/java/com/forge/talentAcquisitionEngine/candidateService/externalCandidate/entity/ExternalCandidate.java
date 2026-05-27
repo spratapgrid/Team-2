@@ -190,35 +190,6 @@ public class ExternalCandidate {
 
     @Getter
     @Setter
-    public static class EducationDetail {
-
-        @NotBlank(message = "Degree is required")
-        @Size(max = 100)
-        private String degree;
-
-        @NotBlank(message = "Specialization is required")
-        @Size(max = 100)
-        private String specialization;
-
-        @NotBlank(message = "Institution name is required")
-        @Size(max = 150)
-        private String institutionName;
-
-        @JsonFormat(pattern = "yyyy")
-        private Integer startYear;
-
-        @JsonFormat(pattern = "yyyy")
-        private Integer endYear;
-
-        @DecimalMin(value = "0.0", message = "Percentage cannot be negative")
-        @DecimalMax(value = "100.0", message = "Percentage must not exceed 100")
-        private Float percentage;
-
-    }
-
-
-    @Getter
-    @Setter
     public static class CertificationDetail {
 
         @NotBlank(message = "Certificate name is required")
