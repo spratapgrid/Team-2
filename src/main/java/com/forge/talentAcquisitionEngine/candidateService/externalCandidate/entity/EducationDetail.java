@@ -20,8 +20,9 @@ public class EducationDetail {
   @Column(name = "education_id")
   private Long educationId;
 
-  @JoinColumn(name = "candidate_id", nullable = false)
-  private ExternalCandidate candidate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "candidate_id", nullable = false)
+    private ExternalCandidate candidate;
 
   @NotBlank(message = "Degree is required")
   @Size(max = 100)

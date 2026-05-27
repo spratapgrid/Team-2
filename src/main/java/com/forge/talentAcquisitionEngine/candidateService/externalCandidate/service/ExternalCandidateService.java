@@ -78,12 +78,9 @@ public class ExternalCandidateService {
         existingCandidate.setDateOfBirth(candidate.getDateOfBirth());
         existingCandidate.setGender(candidate.getGender());
         existingCandidate.setAddress(candidate.getAddress());
-
         existingCandidate.setTotalExperienceYears(candidate.getTotalExperienceYears());
         existingCandidate.setTotalGapYears(candidate.getTotalGapYears());
-
-        existingCandidate.setSkills(candidate.getSkills());
-
+        existingCandidate.getSkill().addAll(candidate.getSkill());
         existingCandidate.setCompanyName(candidate.getCompanyName());
         existingCandidate.setDesignation(candidate.getDesignation());
         existingCandidate.setCurrentCtc(candidate.getCurrentCtc());
@@ -113,7 +110,6 @@ public class ExternalCandidateService {
         ExternalCandidate existingCandidate =
                 externalCandidateRepository.findByCandidateIdAndIsDeletedFalse(candidateId)
                         .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Candidate not found"));
-
         existingCandidate.setIsDeleted(true);
         existingCandidate.setDeletedAt(LocalDateTime.now());
 
