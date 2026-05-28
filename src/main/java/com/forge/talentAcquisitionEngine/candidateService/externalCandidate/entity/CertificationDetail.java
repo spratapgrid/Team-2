@@ -8,6 +8,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
 
@@ -38,11 +39,12 @@ public class CertificationDetail {
 
     @NotNull(message = "Issued date is required")
     @PastOrPresent(message = "Issued date cannot be in the future")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "issued_date", nullable = false)
     private LocalDate issuedDate;
 
     @Size(max = 500)
     @Column(name = "credential_url")
+    @URL(message = "Invalid credential URL")
     private String credentialUrl;
 }

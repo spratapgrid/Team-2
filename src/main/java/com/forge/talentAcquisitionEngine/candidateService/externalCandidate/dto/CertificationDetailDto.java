@@ -7,12 +7,13 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CertificateDetailDto {
+public class CertificationDetailDto {
 
     @NotBlank(message = "Certificate name is required")
     @Size(max = 150, message = "Certificate name must not exceed 150 characters")
@@ -24,9 +25,10 @@ public class CertificateDetailDto {
 
     @NotNull(message = "Issued date is required")
     @PastOrPresent(message = "Issued date cannot be in the future")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate issuedDate;
 
     @Size(max = 500, message = "Credential URL must not exceed 500 characters")
+    @URL(message = "Invalid credential URL")
     private String credentialUrl;
 }

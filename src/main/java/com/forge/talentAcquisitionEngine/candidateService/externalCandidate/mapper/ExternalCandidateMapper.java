@@ -1,6 +1,7 @@
 package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.mapper;
 
-import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.CertificateDetailDto;
+
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.CertificationDetailDto;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.EducationDetailDto;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.ExternalCandidateDto;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.CertificationDetail;
@@ -22,8 +23,6 @@ public class ExternalCandidateMapper {
         }
 
         ExternalCandidate entity = new ExternalCandidate();
-
-        entity.setCandidateId(dto.getCandidateId());
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());
@@ -85,8 +84,6 @@ public class ExternalCandidateMapper {
         }
 
         ExternalCandidateDto dto = new ExternalCandidateDto();
-
-        dto.setCandidateId(entity.getCandidateId());
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
         dto.setEmail(entity.getEmail());
@@ -167,7 +164,7 @@ public class ExternalCandidateMapper {
         return dto;
     }
 
-    private static CertificationDetail certificationDtoToEntity(CertificateDetailDto dto) {
+    private static CertificationDetail certificationDtoToEntity(CertificationDetailDto dto) {
         if (dto == null) {
             return null;
         }
@@ -181,12 +178,12 @@ public class ExternalCandidateMapper {
         return entity;
     }
 
-    private static CertificateDetailDto certificationEntityToDto(CertificationDetail entity) {
+    private static CertificationDetailDto certificationEntityToDto(CertificationDetail entity) {
         if (entity == null) {
             return null;
         }
 
-        CertificateDetailDto dto = new CertificateDetailDto();
+        CertificationDetailDto dto = new CertificationDetailDto();
         dto.setCertificateName(entity.getCertificateName());
         dto.setIssuingOrganization(entity.getIssuingOrganization());
         dto.setIssuedDate(entity.getIssuedDate());

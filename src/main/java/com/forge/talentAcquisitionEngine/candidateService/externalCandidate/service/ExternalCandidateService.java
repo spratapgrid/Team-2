@@ -31,8 +31,6 @@ public class ExternalCandidateService {
     @Transactional
     public CandidateResponse createCandidate(ExternalCandidateDto dto) {
 
-        dto.setCandidateId(null);
-
         String email = normalizeEmail(dto.getEmail());
         String phone = normalizePhone(dto.getPhoneNumber());
 
@@ -91,7 +89,6 @@ public class ExternalCandidateService {
                                 "Candidate not found"
                         ));
 
-        dto.setCandidateId(candidateId);
 
         String email = normalizeEmail(dto.getEmail());
         String phone = normalizePhone(dto.getPhoneNumber());

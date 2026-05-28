@@ -14,8 +14,6 @@ import java.util.List;
 @Setter
 public class ExternalCandidateDto {
 
-    private Long candidateId;
-
     @NotBlank(message = "First name is required")
     @Size(min = 1, max = 100, message = "First name must be between 1 and 100 characters")
     @Pattern(regexp = "^[A-Za-z ]+$", message = "First name must contain only letters and spaces")
@@ -83,8 +81,8 @@ public class ExternalCandidateDto {
     @NotEmpty(message = "At least one education detail is required")
     private List<@Valid EducationDetailDto> educationDetails;
 
-    @NotEmpty(message = "At least one certification detail is required")
-    private List<@Valid CertificateDetailDto> certificationDetails;
+    @Valid
+    private List<CertificationDetailDto> certificationDetails;
 
     @AssertTrue(message = "Candidate must be at least 18 years old")
     public boolean isAdult() {

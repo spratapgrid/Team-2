@@ -125,7 +125,6 @@ public class ExternalCandidate {
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EducationDetail> educationDetails = new ArrayList<>();
 
-    @NotEmpty(message = "At least one certification detail is required")
     @Valid
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CertificationDetail> certificationDetails = new ArrayList<>();
