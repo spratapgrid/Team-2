@@ -11,6 +11,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,11 +33,11 @@ public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "application_id")
-    private Long id;
+    private Long ApplicationId;
 
     @NotNull(message = "Candidate is required")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "candidate_id", nullable = false )
+    @JoinColumn(name = "candidate_id", nullable = false)
     private ExternalCandidate candidate;
 
 //    @NotNull(message = "Demand is required")
@@ -150,9 +151,6 @@ public class Application {
 
     @OneToMany(mappedBy = "application")
     private List<Interview> interviews;
-    @NotNull
-    @Column(name = "blocked_from_reapply", nullable = false)
-    private Boolean blockedFromReapply = false;
 
     @PrePersist
     private void onCreate() {
