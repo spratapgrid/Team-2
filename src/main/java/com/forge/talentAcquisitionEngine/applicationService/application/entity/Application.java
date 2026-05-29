@@ -32,7 +32,7 @@ public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "application_id")
-    private Long id;
+    private Long ApplicationId;
 
     @NotNull(message = "Candidate is required")
     @ManyToOne(fetch = FetchType.LAZY)
