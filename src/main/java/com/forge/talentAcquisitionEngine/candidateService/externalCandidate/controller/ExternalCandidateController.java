@@ -1,13 +1,12 @@
 package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.controller;
 
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.CandidateResponse;
-import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.ExternalCandidateDto;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.service.ExternalCandidateService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/external-candidates")
@@ -21,33 +20,38 @@ public class ExternalCandidateController {
 
     @PostMapping
     public ResponseEntity<CandidateResponse> createCandidate(
-            @Valid @RequestBody ExternalCandidate candidate) {
-        CandidateResponse response = externalCandidateService.createCandidate(candidate);
-
-        if (Boolean.TRUE.equals(response.getDuplicate())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        }
+            @Valid @RequestBody ExternalCandidateDto externalCandidateDto
+    ) {
+        CandidateResponse response =
+                externalCandidateService.createCandidate(externalCandidateDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{candidateId}")
-    public ResponseEntity<CandidateResponse> updateCandidate(@PathVariable Long candidateId,
-                                                             @Valid @RequestBody ExternalCandidate updatedCandidate) {
+    public ResponseEntity<CandidateResponse> updateCandidate(
+            @PathVariable Long candidateId,
+            @Valid @RequestBody ExternalCandidateDto externalCandidateDto
+    ) {
         CandidateResponse response =
-                externalCandidateService.updateCandidate(candidateId, updatedCandidate);
+                externalCandidateService.updateCandidate(candidateId, externalCandidateDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{candidateId}")
-    public ResponseEntity<ExternalCandidate> getCandidateById( @PathVariable Long candidateId ) {
-        ExternalCandidate candidate = externalCandidateService.getByCandidateId(candidateId);
-        return ResponseEntity.ok(candidate);
+    public ResponseEntity<ExternalCandidateDto> getCandidateById(
+            @PathVariable Long candidateId
+    ) {
+        return ResponseEntity.ok(
+                externalCandidateService.getByCandidateId(candidateId)
+        );
     }
 
     @DeleteMapping("/{candidateId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long candidateId) {
+    public ResponseEntity<Void> deleteById(
+            @PathVariable Long candidateId
+    ) {
         externalCandidateService.deleteById(candidateId);
         return ResponseEntity.noContent().build();
     }

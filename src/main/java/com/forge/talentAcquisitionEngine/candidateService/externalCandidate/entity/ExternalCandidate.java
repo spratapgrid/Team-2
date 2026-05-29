@@ -8,23 +8,23 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.type.SqlTypes;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(
         name = "external_candidate",
+        indexes = {
+                @Index(name = "idx_external_candidate_email_hash", columnList = "email_hash"),
+                @Index(name = "idx_external_candidate_phone_hash", columnList = "phone_hash")
+        },
         uniqueConstraints = {
-                @UniqueConstraint(name = "candidate_email", columnNames = "email"),
-                @UniqueConstraint(name = "candidate_phone", columnNames = "phone_number"),
-                @UniqueConstraint(name = "candidate_email_hash", columnNames = "email_hash"),
-                @UniqueConstraint(name = "candidate_phone_hash", columnNames = "phone_hash")
+                @UniqueConstraint(name = "uk_external_candidate_email_hash", columnNames = "email_hash"),
+                @UniqueConstraint(name = "uk_external_candidate_phone_hash", columnNames = "phone_hash")
         }
 )
 @Getter
@@ -37,112 +37,109 @@ public class ExternalCandidate {
     private Long candidateId;
 
     @NotBlank(message = "First name is required")
-    @Size(min = 1, message = "First name must be minimum 1 characters")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "First name must contain only letters and spaces")
-    @Column(name = "first_name", nullable = false)
+    @Size(min = 1, max = 100)
+    @Pattern(regexp = "^[A-Za-z ]+$")
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
     @NotBlank(message = "Last name is required")
-    @Size(min = 1, message = "Last name must be minimum 1 characters")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Last name must contain only letters and spaces")
-    @Column(name = "last_name", nullable = false)
+    @Size(min = 1, max = 100)
+    @Pattern(regexp = "^[A-Za-z ]+$")
+    @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
-    @Size(max = 150, message = "Email must not exceed 150 characters")
-    @Column(name = "email", nullable = false)
+    @Size(max = 150)
+    @Column(name = "email", nullable = false, length = 150)
     private String email;
 
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Phone number must be a valid 10 digit Indian mobile number")
+    @Pattern(regexp = "^[6-9][0-9]{9}$")
     @Column(name = "phone_number", nullable = false, length = 10)
     private String phoneNumber;
 
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Gender is required")
-    @Size(max = 20, message = "Gender must not exceed 20 characters")
-    @Column(name = "gender", nullable = false)
+    @Size(max = 20)
+    @Column(name = "gender", nullable = false, length = 20)
     private String gender;
 
     @NotBlank(message = "Address is required")
-    @Size(max = 500, message = "Address must not exceed 500 characters")
+    @Size(max = 500)
     @Column(name = "address", nullable = false, columnDefinition = "TEXT")
     private String address;
 
-    @DecimalMin(value = "0.0", message = "Total experience cannot be negative")
+    @DecimalMin(value = "0.0")
     @Column(name = "total_experience_years")
     private Float totalExperienceYears;
 
-    @DecimalMin(value = "0.0", message = "Total gap years cannot be negative")
+    @DecimalMin(value = "0.0")
     @Column(name = "total_gap_years")
     private Float totalGapYears;
 
     @NotEmpty(message = "At least one skill is required")
-    private List<
-            @NotBlank(message = "Skill cannot be blank")
-                    String
-            > skills;
+    @Valid
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SkillDetail> skills = new ArrayList<>();
 
-    @Size(max = 100, message = "Company name must not exceed 100 characters")
-    @Column(name = "company_name")
+    @Size(max = 100)
+    @Column(name = "company_name", length = 100)
     private String companyName;
 
-    @Size(max = 100, message = "Designation must not exceed 100 characters")
-    @Column(name = "designation")
+    @Size(max = 100)
+    @Column(name = "designation", length = 100)
     private String designation;
 
-    @DecimalMin(value = "0.0", message = "Current CTC cannot be negative")
+    @Min(value = 0)
     @Column(name = "current_ctc")
     private Long currentCtc;
 
-    @DecimalMin(value = "0.0", message = "Expected CTC cannot be negative")
+    @Min(value = 0)
     @Column(name = "expected_ctc")
     private Long expectedCtc;
 
-    @Min(value = 0, message = "Notice period cannot be negative")
+    @Min(value = 0)
     @Column(name = "notice_period_days")
     private Integer noticePeriodDays;
 
     @Column(name = "willing_to_relocate")
     private Boolean willingToRelocate;
 
-    @Size(max = 1000, message = "Free notes must not exceed 1000 characters")
+    @Size(max = 1000)
     @Column(name = "free_notes", columnDefinition = "TEXT")
     private String freeNotes;
 
     @NotNull(message = "Source is required")
     @Enumerated(EnumType.STRING)
-    @Column(name = "source", nullable = false)
+    @Column(name = "source", nullable = false, length = 50)
     private Source source;
 
+    @NotEmpty(message = "At least one education detail is required")
     @Valid
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "education_details", columnDefinition = "jsonb")
-    private List<EducationDetail> educationDetails;
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EducationDetail> educationDetails = new ArrayList<>();
 
     @Valid
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "certification_details", columnDefinition = "jsonb")
-    private List<CertificationDetail> certificationDetails;
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CertificationDetail> certificationDetails = new ArrayList<>();
 
-    @Size(min = 64, max = 64, message = "Email hash must be 64 characters")
-    @Column(name = "email_hash", unique = true,nullable = false)
+    @Size(min = 64, max = 64)
+    @Column(name = "email_hash", nullable = false, length = 64)
     private String emailHash;
 
-    @Size(min = 64, max = 64, message = "Phone hash must be 64 characters")
-    @Column(name = "phone_hash", unique = true,nullable = false)
+    @Size(min = 64, max = 64)
+    @Column(name = "phone_hash", nullable = false, length = 64)
     private String phoneHash;
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @NotNull
@@ -153,11 +150,11 @@ public class ExternalCandidate {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @Size(max = 100, message = "Deleted by must not exceed 100 characters")
+    @Size(max = 100)
     @Column(name = "deleted_by", length = 100)
     private String deletedBy;
 
-    @Size(max = 500, message = "Delete reason must not exceed 500 characters")
+    @Size(max = 500)
     @Column(name = "delete_reason", columnDefinition = "TEXT")
     private String deleteReason;
 
@@ -181,67 +178,8 @@ public class ExternalCandidate {
     @Column(name = "gdpr_delete_due_at")
     private LocalDateTime gdprDeleteDueAt;
 
-    @NotNull
-    @Column(name = "blocked_from_reapply", nullable = false)
-    private Boolean blockedFromReapply = false;
-
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-
-    @Getter
-    @Setter
-    public static class EducationDetail {
-
-        @NotBlank(message = "Degree is required")
-        @Size(max = 100)
-        private String degree;
-
-        @NotBlank(message = "Specialization is required")
-        @Size(max = 100)
-        private String specialization;
-
-        @NotBlank(message = "Institution name is required")
-        @Size(max = 150)
-        private String institutionName;
-
-        @JsonFormat(pattern = "yyyy")
-        private Integer startYear;
-
-        @JsonFormat(pattern = "yyyy")
-        private Integer endYear;
-
-        @DecimalMin(value = "0.0", message = "Percentage cannot be negative")
-        @DecimalMax(value = "100.0", message = "Percentage must not exceed 100")
-        private Float percentage;
-
-    }
-
-
-    @Getter
-    @Setter
-    public static class CertificationDetail {
-
-        @NotBlank(message = "Certificate name is required")
-        @Size(max = 150)
-        private String certificateName;
-
-        @NotBlank(message = "Issuing organization is required")
-        @Size(max = 150)
-        private String issuingOrganization;
-
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate issuedDate;
-
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate expiryDate;
-
-        @Size(max = 100)
-        private String credentialId;
-
-        @Size(max = 500)
-        private String credentialUrl;
-    }
 }
