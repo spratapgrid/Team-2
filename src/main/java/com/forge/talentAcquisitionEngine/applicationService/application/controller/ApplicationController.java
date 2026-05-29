@@ -16,182 +16,182 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ApplicationController {
 
-  private final ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
-  // =====================================================
-  // GET /applications
-  // =====================================================
+    // =====================================================
+    // GET /applications
+    // =====================================================
 
-  @GetMapping
-  public Page<ApplicationDto> getApplications(
+    @GetMapping
+    public Page<ApplicationDto> getApplications(
 
-      @RequestParam(required = false)
-      Long demandId,
+            @RequestParam(required = false)
+            Long demandId,
 
-      @RequestParam(required = false)
-      String stage,
+            @RequestParam(required = false)
+            String stage,
 
-      @RequestParam(defaultValue = "0")
-      int page,
+            @RequestParam(defaultValue = "0")
+            int page,
 
-      @RequestParam(defaultValue = "20")
-      int size
-  ) {
+            @RequestParam(defaultValue = "20")
+            int size
+    ) {
 
-    return applicationService.getApplications(
-        demandId,
-        stage,
-        page,
-        size
-    );
-  }
+        return applicationService.getApplications(
+                demandId,
+                stage,
+                page,
+                size
+        );
+    }
 
-  // =====================================================
-  // POST /applications
-  // =====================================================
+    // =====================================================
+    // POST /applications
+    // =====================================================
 
-  @PostMapping
-  public ApplicationDto createApplication(
+    @PostMapping
+    public ApplicationDto createApplication(
 
-      @RequestBody
-      ApplicationDto applicationDto
-  ) {
+            @RequestBody
+            ApplicationDto applicationDto
+    ) {
 
-    return applicationService.createApplication(
-        applicationDto
-    );
-  }
+        return applicationService.createApplication(
+                applicationDto
+        );
+    }
 
-  // =====================================================
-  // POST /applications/bulk
-  // =====================================================
+    // =====================================================
+    // POST /applications/bulk
+    // =====================================================
 
-  @PostMapping("/bulk")
-  public String bulkAction(
+    @PostMapping("/bulk")
+    public String bulkAction(
 
-      @RequestBody
-      Map<String, Object> request
-  ) {
+            @RequestBody
+            Map<String, Object> request
+    ) {
 
-    return applicationService.bulkAction(
-        request
-    );
-  }
+        return applicationService.bulkAction(
+                request
+        );
+    }
 
-  // =====================================================
-  // GET /applications/{applicationId}
-  // =====================================================
+    // =====================================================
+    // GET /applications/{applicationId}
+    // =====================================================
 
-  @GetMapping("/{applicationId}")
-  public ApplicationDto getApplicationDetails(
+    @GetMapping("/{applicationId}")
+    public ApplicationDto getApplicationDetails(
 
-      @PathVariable
-      Long applicationId
-  ) {
+            @PathVariable
+            Long applicationId
+    ) {
 
-    return applicationService.getApplicationDetails(
-        applicationId
-    );
-  }
+        return applicationService.getApplicationDetails(
+                applicationId
+        );
+    }
 
-  // =====================================================
-  // PATCH /applications/{applicationId}/stage
-  // =====================================================
+    // =====================================================
+    // PATCH /applications/{applicationId}/stage
+    // =====================================================
 
-  @PatchMapping("/{applicationId}/stage")
-  public ApplicationDto moveStage(
+    @PatchMapping("/{applicationId}/stage")
+    public ApplicationDto moveStage(
 
-      @PathVariable
-      Long applicationId,
+            @PathVariable
+            Long applicationId,
 
-      @RequestBody
-      Map<String, String> request
-  ) {
+            @RequestBody
+            Map<String, String> request
+    ) {
 
-    return applicationService.moveStage(
-        applicationId,
-        request
-    );
-  }
+        return applicationService.moveStage(
+                applicationId,
+                request
+        );
+    }
 
-  // =====================================================
-  // PATCH /applications/{applicationId}/withdraw
-  // =====================================================
+    // =====================================================
+    // PATCH /applications/{applicationId}/withdraw
+    // =====================================================
 
-  @PatchMapping("/{applicationId}/withdraw")
-  public ApplicationDto withdrawApplication(
+    @PatchMapping("/{applicationId}/withdraw")
+    public ApplicationDto withdrawApplication(
 
-      @PathVariable
-      Long applicationId,
+            @PathVariable
+            Long applicationId,
 
-      @RequestBody
-      Map<String, String> request
-  ) {
+            @RequestBody
+            Map<String, String> request
+    ) {
 
-    return applicationService.withdrawApplication(
-        applicationId,
-        request
-    );
-  }
+        return applicationService.withdrawApplication(
+                applicationId,
+                request
+        );
+    }
 
-  // =====================================================
-  // GET /applications/{applicationId}/timeline
-  // =====================================================
+    // =====================================================
+    // GET /applications/{applicationId}/timeline
+    // =====================================================
 
-  @GetMapping("/{applicationId}/timeline")
-  public List<String> getTimeline(
+    @GetMapping("/{applicationId}/timeline")
+    public List<String> getTimeline(
 
-      @PathVariable
-      Long applicationId
-  ) {
+            @PathVariable
+            Long applicationId
+    ) {
 
-    return applicationService.getTimeline(
-        applicationId
-    );
-  }
+        return applicationService.getTimeline(
+                applicationId
+        );
+    }
 
-  // =====================================================
-  // GET /applications/search
-  // =====================================================
+    // =====================================================
+    // GET /applications/search
+    // =====================================================
 
-  @GetMapping("/search")
-  public Page<ApplicationDto> searchApplications(
+    @GetMapping("/search")
+    public Page<ApplicationDto> searchApplications(
 
-      @RequestParam
-      String keyword,
+            @RequestParam
+            String keyword,
 
-      @RequestParam(required = false)
-      Integer minScore,
+            @RequestParam(required = false)
+            Integer minScore,
 
-      @RequestParam(defaultValue = "0")
-      int page,
+            @RequestParam(defaultValue = "0")
+            int page,
 
-      @RequestParam(defaultValue = "20")
-      int size
-  ) {
+            @RequestParam(defaultValue = "20")
+            int size
+    ) {
 
-    return applicationService.searchApplications(
-        keyword,
-        minScore,
-        page,
-        size
-    );
-  }
+        return applicationService.searchApplications(
+                keyword,
+                minScore,
+                page,
+                size
+        );
+    }
 
-  // =====================================================
-  // POST /applications/export
-  // =====================================================
+    // =====================================================
+    // POST /applications/export
+    // =====================================================
 
-  @PostMapping("/export")
-  public String exportApplications(
+    @PostMapping("/export")
+    public String exportApplications(
 
-      @RequestBody
-      Map<String, Object> request
-  ) {
+            @RequestBody
+            Map<String, Object> request
+    ) {
 
-    return applicationService.exportApplications(
-        request
-    );
-  }
+        return applicationService.exportApplications(
+                request
+        );
+    }
 
 }

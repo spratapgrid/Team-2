@@ -17,7 +17,6 @@ public class ApplicationMapper {
   public static Application dtoToEntity(
       ApplicationDto dto,
       ExternalCandidate candidate
-//            Demand demand
   ) {
 
     if (dto == null) {
@@ -29,8 +28,6 @@ public class ApplicationMapper {
     entity.setId(dto.getId());
 
     entity.setCandidate(candidate);
-
-//        entity.setDemand(demand);
 
     entity.setSource(dto.getSource());
 
@@ -50,24 +47,36 @@ public class ApplicationMapper {
         dto.getMissingSkills()
     );
 
-    entity.setAiRationale(
-        dto.getAiRationale()
-    );
-
-    entity.setFreeNotes(
-        dto.getFreeNotes()
-    );
-
-    entity.setCurrentStage(
-        dto.getCurrentStage()
+    entity.setOtherSkills(
+        dto.getOtherSkills()
     );
 
     entity.setAiScore(
         dto.getAiScore()
     );
 
+    entity.setAiRationale(
+        dto.getAiRationale()
+    );
+
+    entity.setCurrentStage(
+        dto.getCurrentStage()
+    );
+
     entity.setStageMoveReason(
         dto.getStageMoveReason()
+    );
+
+    entity.setFreeNotes(
+        dto.getFreeNotes()
+    );
+
+    entity.setReferralCode(
+        dto.getReferralCode()
+    );
+
+    entity.setBlockedFromReapply(
+        dto.getBlockedFromReapply()
     );
 
     entity.setAppliedAt(
@@ -84,6 +93,10 @@ public class ApplicationMapper {
 
     entity.setInterviewAt(
         dto.getInterviewAt()
+    );
+
+    entity.setReapplyAllowedAfter(
+        dto.getReapplyAllowedAfter()
     );
 
     entity.setFinalRoundAt(
@@ -104,10 +117,6 @@ public class ApplicationMapper {
 
     entity.setRejectionReason(
         dto.getRejectionReason()
-    );
-
-    entity.setReferralCode(
-        dto.getReferralCode()
     );
 
     return entity;
@@ -134,13 +143,6 @@ public class ApplicationMapper {
       );
     }
 
-//        if (entity.getDemand() != null) {
-//
-//            dto.setDemandId(
-//                    entity.getDemand().getId()
-//            );
-//        }
-
     dto.setSource(
         entity.getSource()
     );
@@ -161,24 +163,36 @@ public class ApplicationMapper {
         entity.getMissingSkills()
     );
 
-    dto.setAiRationale(
-        entity.getAiRationale()
-    );
-
-    dto.setFreeNotes(
-        entity.getFreeNotes()
-    );
-
-    dto.setCurrentStage(
-        entity.getCurrentStage()
+    dto.setOtherSkills(
+        entity.getOtherSkills()
     );
 
     dto.setAiScore(
         entity.getAiScore()
     );
 
+    dto.setAiRationale(
+        entity.getAiRationale()
+    );
+
+    dto.setCurrentStage(
+        entity.getCurrentStage()
+    );
+
     dto.setStageMoveReason(
         entity.getStageMoveReason()
+    );
+
+    dto.setFreeNotes(
+        entity.getFreeNotes()
+    );
+
+    dto.setReferralCode(
+        entity.getReferralCode()
+    );
+
+    dto.setBlockedFromReapply(
+        entity.getBlockedFromReapply()
     );
 
     dto.setAppliedAt(
@@ -213,12 +227,11 @@ public class ApplicationMapper {
         entity.getRejectedAt()
     );
 
+    dto.setReapplyAllowedAfter(
+        entity.getReapplyAllowedAfter()
+    );
     dto.setRejectionReason(
         entity.getRejectionReason()
-    );
-
-    dto.setReferralCode(
-        entity.getReferralCode()
     );
 
     if (entity.getInterviews() != null) {

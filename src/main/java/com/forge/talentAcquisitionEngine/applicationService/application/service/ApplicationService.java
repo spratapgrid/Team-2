@@ -10,6 +10,7 @@ import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.repo
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ApplicationService {
 
+  @Autowired
   private final ApplicationRepository applicationRepository;
 
   private final ExternalCandidateRepository externalCandidateRepository;
@@ -30,20 +32,20 @@ public class ApplicationService {
   // =====================================================
 
   public Page<ApplicationDto> getApplications(
-      Long demandId,
-      String stage,
-      int page,
-      int size
+          Long demandId,
+          String stage,
+          int page,
+          int size
   ) {
 
     Pageable pageable =
-        PageRequest.of(page, size);
+            PageRequest.of(page, size);
 
     Page<Application> applications =
-        applicationRepository.findAll(pageable);
+            applicationRepository.findAll(pageable);
 
     return applications.map(
-        ApplicationMapper::entityToDto
+            ApplicationMapper::entityToDto
     );
   }
 
@@ -52,29 +54,29 @@ public class ApplicationService {
   // =====================================================
 
   public ApplicationDto createApplication(
-      ApplicationDto dto
+          ApplicationDto dto
   ) {
 
     ExternalCandidate candidate =
-        externalCandidateRepository.findById(
-            dto.getCandidateId()
-        ).orElseThrow(
-            () -> new RuntimeException("Candidate not found")
-        );
+            externalCandidateRepository.findById(
+                    dto.getCandidateId()
+            ).orElseThrow(
+                    () -> new RuntimeException("Candidate not found")
+            );
 
     Application application =
-        ApplicationMapper.dtoToEntity(
-            dto,
-            candidate
-        );
+            ApplicationMapper.dtoToEntity(
+                    dto,
+                    candidate
+            );
 
     Application saved =
-        applicationRepository.save(
-            application
-        );
+            applicationRepository.save(
+                    application
+            );
 
     return ApplicationMapper.entityToDto(
-        saved
+            saved
     );
   }
 
@@ -83,7 +85,7 @@ public class ApplicationService {
   // =====================================================
 
   public String bulkAction(
-      Map<String, Object> request
+          Map<String, Object> request
   ) {
 
     return "Bulk action completed";
@@ -94,18 +96,18 @@ public class ApplicationService {
   // =====================================================
 
   public ApplicationDto getApplicationDetails(
-      Long applicationId
+          Long applicationId
   ) {
 
     Application application =
-        applicationRepository.findById(
-            applicationId
-        ).orElseThrow(
-            () -> new RuntimeException("Application not found")
-        );
+            applicationRepository.findById(
+                    applicationId
+            ).orElseThrow(
+                    () -> new RuntimeException("Application not found")
+            );
 
     return ApplicationMapper.entityToDto(
-        application
+            application
     );
   }
 
@@ -114,31 +116,31 @@ public class ApplicationService {
   // =====================================================
 
   public ApplicationDto moveStage(
-      Long applicationId,
-      Map<String, String> request
+          Long applicationId,
+          Map<String, String> request
   ) {
 
     Application application =
-        applicationRepository.findById(
-            applicationId
-        ).orElseThrow(
-            () -> new RuntimeException("Application not found")
-        );
+            applicationRepository.findById(
+                    applicationId
+            ).orElseThrow(
+                    () -> new RuntimeException("Application not found")
+            );
 
     String targetStage =
-        request.get("targetStage");
+            request.get("targetStage");
 
     application.setCurrentStage(
-        Stage.valueOf(targetStage)
+            Stage.valueOf(targetStage)
     );
 
     Application updated =
-        applicationRepository.save(
-            application
-        );
+            applicationRepository.save(
+                    application
+            );
 
     return ApplicationMapper.entityToDto(
-        updated
+            updated
     );
   }
 
@@ -147,32 +149,32 @@ public class ApplicationService {
   // =====================================================
 
   public ApplicationDto withdrawApplication(
-      Long applicationId,
-      Map<String, String> request
+          Long applicationId,
+          Map<String, String> request
   ) {
 
     Application application =
-        applicationRepository.findById(
-            applicationId
-        ).orElseThrow(
-            () -> new RuntimeException("Application not found")
-        );
+            applicationRepository.findById(
+                    applicationId
+            ).orElseThrow(
+                    () -> new RuntimeException("Application not found")
+            );
 
     application.setCurrentStage(
-        Stage.REJECTED
+            Stage.REJECTED
     );
 
     application.setRejectionReason(
-        request.get("reason")
+            request.get("reason")
     );
 
     Application updated =
-        applicationRepository.save(
-            application
-        );
+            applicationRepository.save(
+                    application
+            );
 
     return ApplicationMapper.entityToDto(
-        updated
+            updated
     );
   }
 
@@ -181,13 +183,13 @@ public class ApplicationService {
   // =====================================================
 
   public List<String> getTimeline(
-      Long applicationId
+          Long applicationId
   ) {
 
     return List.of(
-        "APPLIED",
-        "SCREENING",
-        "INTERVIEW"
+            "APPLIED",
+            "SCREENING",
+            "INTERVIEW"
     );
   }
 
@@ -196,23 +198,23 @@ public class ApplicationService {
   // =====================================================
 
   public Page<ApplicationDto> searchApplications(
-      String keyword,
-      Integer minScore,
-      int page,
-      int size
+          String keyword,
+          Integer minScore,
+          int page,
+          int size
   ) {
 
     Pageable pageable =
-        PageRequest.of(page, size);
+            PageRequest.of(page, size);
 
     Page<Application> applications =
-        applicationRepository.findByAiScoreGreaterThanEqual(
-            minScore == null ? 0 : minScore,
-            pageable
-        );
+            applicationRepository.findByAiScoreGreaterThanEqual(
+                    minScore == null ? 0 : minScore,
+                    pageable
+            );
 
     return applications.map(
-        ApplicationMapper::entityToDto
+            ApplicationMapper::entityToDto
     );
   }
 
@@ -221,7 +223,7 @@ public class ApplicationService {
   // =====================================================
 
   public String exportApplications(
-      Map<String, Object> request
+          Map<String, Object> request
   ) {
 
     return "Export started";

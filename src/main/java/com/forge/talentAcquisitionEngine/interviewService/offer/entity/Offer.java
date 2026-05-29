@@ -1,8 +1,8 @@
-package com.forge.talentAcquisitionEngine.offerService.offer.entity;
+package com.forge.talentAcquisitionEngine.interviewService.offer.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.forge.talentAcquisitionEngine.applicationService.application.entity.Application;
-import com.forge.talentAcquisitionEngine.offerService.offer.enums.Status;
+import com.forge.talentAcquisitionEngine.interviewService.offer.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;

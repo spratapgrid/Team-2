@@ -1,6 +1,8 @@
 package com.forge.talentAcquisitionEngine.interviewService.interview.enums;
 
 public enum Status {
+    PENDING_SCHEDULING,
+    RESCHEDULED,
     SCHEDULED,
     COMPLETED,
     CANCELLED,
