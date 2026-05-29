@@ -54,7 +54,7 @@ public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "application_id")
-    private Long id;
+    private Long ApplicationId;
 
     // =====================================================
     // CANDIDATE
