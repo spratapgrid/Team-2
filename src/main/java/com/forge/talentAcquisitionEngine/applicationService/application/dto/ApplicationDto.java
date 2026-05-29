@@ -20,7 +20,7 @@ public class ApplicationDto {
   private Long candidateId;
 
 //    @NotNull(message = "Demand id is required")
-//    private Demand demandId;
+//    private Long demandId;
 
   @NotNull(message = "Source is required")
   private Source source;
@@ -34,14 +34,14 @@ public class ApplicationDto {
   private String resumeOriginalFilename;
 
   private List<
-      @NotBlank(message = "Matched skill cannot be blank")
-          String
-      > matchedSkills;
+          @NotBlank(message = "Matched skill cannot be blank")
+                  String
+          > matchedSkills;
 
   private List<
-      @NotBlank(message = "Missing skill cannot be blank")
-          String
-      > missingSkills;
+          @NotBlank(message = "Missing skill cannot be blank")
+                  String
+          > missingSkills;
 
   @NotBlank(message = "AI rationale is required")
   @Size(min = 30, max = 300, message = "AI rationale must be between 30 and 300 characters")
