@@ -1,6 +1,7 @@
 package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -28,7 +29,8 @@ public class CertificationDetailDto {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate issuedDate;
 
-    @Size(max = 500, message = "Credential URL must not exceed 500 characters")
-    @URL(message = "Invalid credential URL")
-    private String credentialUrl;
+    @Size(max = 500)
+    @Column(name = "certificate_file_path")
+    @URL(message = "Invalid file path")
+    private String certificateFilePath;
 }

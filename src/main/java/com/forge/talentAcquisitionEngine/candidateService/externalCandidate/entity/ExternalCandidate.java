@@ -133,6 +133,10 @@ public class ExternalCandidate {
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CertificationDetail> certificationDetails = new HashSet<>();
 
+    @Valid
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ResumeDetail> resumeDetails = new ArrayList<>();
+
     @Size(min = 64, max = 64)
     @Column(name = "email_hash", nullable = false, length = 64)
     private String emailHash;

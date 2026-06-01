@@ -45,7 +45,7 @@ public class CertificationDetail {
     private LocalDate issuedDate;
 
     @Size(max = 500)
-    @Column(name = "credential_url")
-    @URL(message = "Invalid credential URL")
-    private String credentialUrl;
+    @Column(name = "certificate_file_path")
+    @URL(message = "Invalid file path")
+    private String certificateFilePath;
 }
