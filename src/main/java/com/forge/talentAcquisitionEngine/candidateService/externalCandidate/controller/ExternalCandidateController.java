@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/external-candidates")
+@RequestMapping("/api/v1/external-candidates")
 public class ExternalCandidateController {
 
     private final ExternalCandidateService externalCandidateService;
@@ -19,13 +19,11 @@ public class ExternalCandidateController {
     }
 
     @PostMapping
-    public ResponseEntity<CandidateResponse> createCandidate(
-            @Valid @RequestBody ExternalCandidateDto externalCandidateDto
-    ) {
+    public CandidateResponse createCandidate(@Valid @RequestBody ExternalCandidateDto externalCandidateDto){
         CandidateResponse response =
                 externalCandidateService.createCandidate(externalCandidateDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response).getBody();
     }
 
     @PutMapping("/{candidateId}")

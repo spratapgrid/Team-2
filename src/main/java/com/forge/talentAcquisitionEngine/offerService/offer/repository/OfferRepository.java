@@ -1,7 +1,7 @@
-package com.forge.talentAcquisitionEngine.interviewService.offer.repository;
+package com.forge.talentAcquisitionEngine.offerService.offer.repository;
 
-import com.forge.talentAcquisitionEngine.interviewService.offer.entity.Offer;
-import com.forge.talentAcquisitionEngine.interviewService.offer.enums.Status;
+import com.forge.talentAcquisitionEngine.offerService.offer.entity.Offer;
+import com.forge.talentAcquisitionEngine.offerService.offer.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

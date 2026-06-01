@@ -77,10 +77,7 @@ public class ExternalCandidateService {
     }
 
     @Transactional
-    public CandidateResponse updateCandidate(
-            Long candidateId,
-            ExternalCandidateDto dto
-    ) {
+    public CandidateResponse updateCandidate(Long candidateId, ExternalCandidateDto dto) {
 
         ExternalCandidate existingCandidate =
                 externalCandidateRepository.findWithDetailsByCandidateIdAndIsDeletedFalse(candidateId)
@@ -88,7 +85,6 @@ public class ExternalCandidateService {
                                 HttpStatus.NOT_FOUND,
                                 "Candidate not found"
                         ));
-
 
         String email = normalizeEmail(dto.getEmail());
         String phone = normalizePhone(dto.getPhoneNumber());
@@ -110,8 +106,7 @@ public class ExternalCandidateService {
             );
         }
 
-        ExternalCandidate updatedCandidate =
-                ExternalCandidateMapper.dtoToEntity(dto);
+        ExternalCandidate updatedCandidate = ExternalCandidateMapper.dtoToEntity(dto);
 
         existingCandidate.setFirstName(updatedCandidate.getFirstName());
         existingCandidate.setLastName(updatedCandidate.getLastName());
@@ -133,27 +128,58 @@ public class ExternalCandidateService {
         existingCandidate.setFreeNotes(updatedCandidate.getFreeNotes());
         existingCandidate.setSource(updatedCandidate.getSource());
 
-        existingCandidate.getSkills().clear();
         if (updatedCandidate.getSkills() != null) {
-            updatedCandidate.getSkills().forEach(skill -> {
-                skill.setCandidate(existingCandidate);
-                existingCandidate.getSkills().add(skill);
+            updatedCandidate.getSkills().forEach(newSkill -> {
+
+                boolean alreadyExists = existingCandidate.getSkills()
+                        .stream()
+                        .anyMatch(existingSkill ->
+                                existingSkill.getSkillName()
+                                        .equalsIgnoreCase(newSkill.getSkillName())
+                        );
+
+                if (!alreadyExists) {
+                    newSkill.setCandidate(existingCandidate);
+                    existingCandidate.getSkills().add(newSkill);
+                }
             });
         }
 
-        existingCandidate.getEducationDetails().clear();
         if (updatedCandidate.getEducationDetails() != null) {
-            updatedCandidate.getEducationDetails().forEach(education -> {
-                education.setCandidate(existingCandidate);
-                existingCandidate.getEducationDetails().add(education);
+            updatedCandidate.getEducationDetails().forEach(newEducation -> {
+
+                boolean alreadyExists = existingCandidate.getEducationDetails()
+                        .stream()
+                        .anyMatch(existingEducation ->
+                                existingEducation.getDegree().equalsIgnoreCase(newEducation.getDegree())
+                                        && existingEducation.getSpecialization().equalsIgnoreCase(newEducation.getSpecialization())
+                                        && existingEducation.getInstitutionName().equalsIgnoreCase(newEducation.getInstitutionName())
+                                        && existingEducation.getStartYear().equals(newEducation.getStartYear())
+                                        && existingEducation.getEndYear().equals(newEducation.getEndYear())
+                        );
+
+                if (!alreadyExists) {
+                    newEducation.setCandidate(existingCandidate);
+                    existingCandidate.getEducationDetails().add(newEducation);
+                }
             });
         }
 
-        existingCandidate.getCertificationDetails().clear();
         if (updatedCandidate.getCertificationDetails() != null) {
-            updatedCandidate.getCertificationDetails().forEach(certification -> {
-                certification.setCandidate(existingCandidate);
-                existingCandidate.getCertificationDetails().add(certification);
+            updatedCandidate.getCertificationDetails().forEach(newCertification -> {
+
+                boolean alreadyExists = existingCandidate.getCertificationDetails()
+                        .stream()
+                        .anyMatch(existingCertification ->
+                                existingCertification.getCertificateName().equalsIgnoreCase(newCertification.getCertificateName())
+                                        && existingCertification.getIssuingOrganization().equalsIgnoreCase(newCertification.getIssuingOrganization())
+                                        && existingCertification.getIssuedDate().equals(newCertification.getIssuedDate())
+                        );
+
+                if (!alreadyExists) {
+                    newCertification.setCandidate(existingCandidate);
+                    existingCandidate.getCertificationDetails().add(newCertification);
+                }
             });
         }
 

@@ -4,242 +4,110 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.forge.talentAcquisitionEngine.applicationService.application.enums.Stage;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enums.Source;
+//import com.forge.talentAcquisitionEngine.demandService.demand.entity.Demand;
 import com.forge.talentAcquisitionEngine.interviewService.interview.entity.Interview;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(
-    name = "application",
-    indexes = {
-        @Index(
-            name = "idx_application_candidate",
-            columnList = "candidate_id"
-        ),
-        @Index(
-            name = "idx_application_demand",
-            columnList = "demand_id"
-        ),
-        @Index(
-            name = "idx_application_stage",
-            columnList = "current_stage"
-        ),
-        @Index(
-            name = "idx_application_score",
-            columnList = "ai_score"
-        )
-    },
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "uk_candidate_demand",
-            columnNames = {
-                "candidate_id",
-                "demand_id"
-            }
-        )
-    }
+        name = "application",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "candidate_demand_unique",
+                        columnNames = {"candidate_id", "demand_id"}
+                )
+        }
 )
 public class Application {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "application_id")
-    private Long ApplicationId;
-
-    // =====================================================
-    // CANDIDATE
-    // =====================================================
+    private Long id;
 
     @NotNull(message = "Candidate is required")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-        name = "candidate_id",
-        nullable = false
-    )
+    @JoinColumn(name = "candidate_id", nullable = false )
     private ExternalCandidate candidate;
 
-    // =====================================================
-    // TEMPORARY DEMAND REFERENCE
-    // REPLACE WITH Demand ENTITY LATER
-    // =====================================================
-
-    @NotNull(message = "Demand id is required")
-    @Positive(message = "Demand id must be positive")
-    @Column(name = "demand_id", nullable = false)
-    private Long demandId;
-
-    // =====================================================
-    // SOURCE
-    // =====================================================
+//    @NotNull(message = "Demand is required")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "demand_id", nullable = false)
+//    private Demand demand;
 
     @NotNull(message = "Source is required")
     @Enumerated(EnumType.STRING)
-    @Column(
-        name = "source",
-        nullable = false,
-        length = 50
-    )
+    @Column(name = "source", nullable = false)
     private Source source;
 
-    // =====================================================
-    // RESUME
-    // =====================================================
-
     @NotBlank(message = "Resume file path is required")
-    @Size(max = 500)
-    @Column(
-        name = "resume_file_path",
-        nullable = false,
-        length = 500
-    )
+    @Size(max = 500, message = "Resume file path must not exceed 500 characters")
+    @Column(name = "resume_file_path", nullable = false, length = 500)
     private String resumeFilePath;
 
-    @NotBlank(message = "Original filename is required")
-    @Size(max = 255)
-    @Column(
-        name = "resume_original_filename",
-        nullable = false,
-        length = 255
-    )
+    @NotBlank(message = "Original resume filename is required")
+    @Size(max = 255, message = "Original filename must not exceed 255 characters")
+    @Column(name = "resume_original_filename", nullable = false, length = 255)
     private String resumeOriginalFilename;
 
-    // =====================================================
-    // SKILL ANALYSIS
-    // =====================================================
 
     @ElementCollection
     @CollectionTable(
-        name = "application_matched_skills",
-        joinColumns = @JoinColumn(name = "application_id")
+            name = "application_matched_skills",
+            joinColumns = @JoinColumn(name = "application_id")
     )
-    @Column(name = "skill")
-    private List<String> matchedSkills = new ArrayList<>();
+    @Column(name = "skill", length = 50)
+    private List< String > matchedSkills;
 
     @ElementCollection
     @CollectionTable(
-        name = "application_missing_skills",
-        joinColumns = @JoinColumn(name = "application_id")
+            name = "application_missing_skills",
+            joinColumns = @JoinColumn(name = "application_id")
     )
-    @Column(name = "skill")
-    private List<String> missingSkills = new ArrayList<>();
+    @Column(name = "skill", length = 50)
+    private List< String > missingSkills;
 
-    @ElementCollection
-    @CollectionTable(
-        name = "application_other_skills",
-        joinColumns = @JoinColumn(name = "application_id")
-    )
-    @Column(name = "skill")
-    private List<String> otherSkills = new ArrayList<>();
+    @Column(name = "skill", length = 50)
+    private List< String > otherSkills;
 
-    // =====================================================
-    // AI
-    // =====================================================
-
-    @NotNull(message = "AI score is required")
-    @Min(value = 0)
-    @Max(value = 100)
-    @Column(
-        name = "ai_score",
-        nullable = false
-    )
-    private Integer aiScore;
-
-    @Size(max = 1000)
-    @Column(
-        name = "ai_rationale",
-        columnDefinition = "TEXT"
-    )
+    @NotBlank(message = "AI rationale is required")
+    @Size(min = 30, max = 300, message = "AI rationale must be between 30 and 300 characters")
+    @Column(name = "ai_rationale", columnDefinition = "TEXT")
     private String aiRationale;
 
-    // =====================================================
-    // STAGE
-    // =====================================================
+    @Size(max = 100, message = "Free notes must not exceed 100 characters")
+    @Column(name = "free_notes", columnDefinition = "TEXT")
+    private String freeNotes;
+
 
     @NotNull(message = "Current stage is required")
     @Enumerated(EnumType.STRING)
-    @Column(
-        name = "current_stage",
-        nullable = false,
-        length = 50
-    )
+    @Column(name = "current_stage", nullable = false)
     private Stage currentStage;
 
-    @Size(max = 500)
-    @Column(
-        name = "stage_move_reason",
-        columnDefinition = "TEXT"
-    )
+    @NotNull(message = "AI score is required")
+    @Min(value = 0, message = "AI score must be at least 0")
+    @Max(value = 100, message = "AI score must not exceed 100")
+    @Column(name = "ai_score", nullable = false)
+    private Integer aiScore;
+
+    @Size(max = 500, message = "Stage move reason must not exceed 500 characters")
+    @Column(name = "stage_move_reason", columnDefinition = "TEXT")
     private String stageMoveReason;
 
-    // =====================================================
-    // REAPPLY RULES
-    // =====================================================
-
-    @NotNull
-    @Column(
-        name = "blocked_from_reapply",
-        nullable = false
-    )
-    private Boolean blockedFromReapply = false;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "reapply_allowed_after")
-    private LocalDateTime reapplyAllowedAfter;
-
-    // =====================================================
-    // NOTES
-    // =====================================================
-
-    @Size(max = 2000)
-    @Column(
-        name = "free_notes",
-        columnDefinition = "TEXT"
-    )
-    private String freeNotes;
-
-    // =====================================================
-    // REFERRAL
-    // =====================================================
-
-    @Size(max = 100)
-    @Column(
-        name = "referral_code",
-        length = 100
-    )
-    private String referralCode;
-
-    // =====================================================
-    // REJECTION
-    // =====================================================
-
-    @Size(max = 1000)
-    @Column(
-        name = "rejection_reason",
-        columnDefinition = "TEXT"
-    )
-    private String rejectionReason;
-
-    // =====================================================
-    // TIMELINE
-    // =====================================================
-
     @CreationTimestamp
+    @Column(name = "applied_at", nullable = false, updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(
-        name = "applied_at",
-        nullable = false,
-        updatable = false
-    )
     private LocalDateTime appliedAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -270,100 +138,57 @@ public class Application {
     @Column(name = "rejected_at")
     private LocalDateTime rejectedAt;
 
-    // =====================================================
-    // INTERVIEWS
-    // =====================================================
+    @Size(max = 100, message = "Rejection reason must not exceed 100 characters")
+    @Column(name = "rejection_reason", length = 100)
+    private String rejectionReason;
 
-    @OneToMany(
-        mappedBy = "application",
-        fetch = FetchType.LAZY
-    )
-    private List<Interview> interviews = new ArrayList<>();
+    @Size(max = 50, message = "Referral code must not exceed 50 characters")
+    @Column(name = "referral_code", length = 50)
+    private String referralCode;
 
-    // =====================================================
-    // AUDIT
-    // =====================================================
-
-    @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(
-        name = "created_at",
-        updatable = false
-    )
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    // =====================================================
-    // DEFAULTS
-    // =====================================================
+    @OneToMany(mappedBy = "application")
+    private List<Interview> interviews;
+    @NotNull
+    @Column(name = "blocked_from_reapply", nullable = false)
+    private Boolean blockedFromReapply = false;
 
     @PrePersist
-    public void prePersist() {
-
-        if (currentStage == null) {
-            currentStage = Stage.APPLIED;
-        }
-
-        if (blockedFromReapply == null) {
-            blockedFromReapply = false;
+    private void onCreate() {
+        if (this.currentStage == null) {
+            this.currentStage = Stage.APPLIED;
         }
     }
 
     @PreUpdate
-    public void preUpdate() {
-
+    private void onUpdate() {
         LocalDateTime now = LocalDateTime.now();
 
-        switch (currentStage) {
+        if (Stage.SCREENING.equals(this.currentStage) && this.screeningAt == null) {
+            this.screeningAt = now;
+        }
 
-            case SCREENING -> {
-                if (screeningAt == null) {
-                    screeningAt = now;
-                }
-            }
+        if (Stage.TECHNICAL.equals(this.currentStage) && this.technicalAt == null) {
+            this.technicalAt = now;
+        }
 
-            case TECHNICAL -> {
-                if (technicalAt == null) {
-                    technicalAt = now;
-                }
-            }
+        if (Stage.INTERVIEW.equals(this.currentStage) && this.interviewAt == null) {
+            this.interviewAt = now;
+        }
 
-            case INTERVIEW -> {
-                if (interviewAt == null) {
-                    interviewAt = now;
-                }
-            }
+        if (Stage.FINAL_ROUND.equals(this.currentStage) && this.finalRoundAt == null) {
+            this.finalRoundAt = now;
+        }
 
-            case FINAL_ROUND -> {
-                if (finalRoundAt == null) {
-                    finalRoundAt = now;
-                }
-            }
+        if (Stage.OFFERED.equals(this.currentStage) && this.offerAt == null) {
+            this.offerAt = now;
+        }
 
-            case OFFERED -> {
-                if (offerAt == null) {
-                    offerAt = now;
-                }
-            }
+        if (Stage.HIRED.equals(this.currentStage) && this.hiredAt == null) {
+            this.hiredAt = now;
+        }
 
-            case HIRED -> {
-                if (hiredAt == null) {
-                    hiredAt = now;
-                }
-            }
-
-            case REJECTED -> {
-                if (rejectedAt == null) {
-                    rejectedAt = now;
-                }
-            }
-
-            default -> {
-            }
+        if (Stage.REJECTED.equals(this.currentStage) && this.rejectedAt == null) {
+            this.rejectedAt = now;
         }
     }
 }

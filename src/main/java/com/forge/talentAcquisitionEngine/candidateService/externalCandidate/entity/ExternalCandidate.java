@@ -13,7 +13,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -86,7 +88,7 @@ public class ExternalCandidate {
     @NotEmpty(message = "At least one skill is required")
     @Valid
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SkillDetail> skills = new ArrayList<>();
+    private Set<SkillDetail> skills = new HashSet<>();
 
     @Size(max = 100)
     @Column(name = "company_name", length = 100)
@@ -123,11 +125,13 @@ public class ExternalCandidate {
     @NotEmpty(message = "At least one education detail is required")
     @Valid
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EducationDetail> educationDetails = new ArrayList<>();
+
+    private Set<EducationDetail> educationDetails = new HashSet<>();
+
 
     @Valid
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CertificationDetail> certificationDetails = new ArrayList<>();
+    private Set<CertificationDetail> certificationDetails = new HashSet<>();
 
     @Size(min = 64, max = 64)
     @Column(name = "email_hash", nullable = false, length = 64)

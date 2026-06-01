@@ -40,11 +40,11 @@ public class AiEngineFileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-
         String response = resumeStoreService.saveResume(file);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     @PostMapping("/parse")
     public ResponseEntity<ParsedResumeDTO> parseResume(@RequestParam("file") MultipartFile file) {
         ParsedResumeDTO parsedResumeDTO = resumeParseService.parseResume(file);

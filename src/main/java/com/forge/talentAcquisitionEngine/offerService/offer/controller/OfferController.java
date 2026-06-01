@@ -1,8 +1,8 @@
-package com.forge.talentAcquisitionEngine.interviewService.offer.controller;
+package com.forge.talentAcquisitionEngine.offerService.offer.controller;
 
-import com.forge.talentAcquisitionEngine.interviewService.offer.entity.Offer;
-import com.forge.talentAcquisitionEngine.interviewService.offer.enums.Status;
-import com.forge.talentAcquisitionEngine.interviewService.offer.service.OfferServiceImpl;
+import com.forge.talentAcquisitionEngine.offerService.offer.entity.Offer;
+import com.forge.talentAcquisitionEngine.offerService.offer.enums.Status;
+import com.forge.talentAcquisitionEngine.offerService.offer.service.OfferServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,6 +1,7 @@
 package com.forge.talentAcquisitionEngine.offerService.offer.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.forge.talentAcquisitionEngine.offerService.offer.enums.Status;
 import jakarta.validation.constraints.*;
 import lombok.Getter;

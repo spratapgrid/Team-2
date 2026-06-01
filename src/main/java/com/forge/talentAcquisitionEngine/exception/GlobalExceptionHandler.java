@@ -1,12 +1,11 @@
 package com.forge.talentAcquisitionEngine.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -17,25 +16,30 @@ public class GlobalExceptionHandler {
             BusinessException ex
     ) {
 
-        Map<String, Object> body = new HashMap<>();
+        Map<String, Object> body = new LinkedHashMap<>();
+
         body.put("timestamp", LocalDateTime.now());
         body.put("status", ex.getStatus().value());
         body.put("message", ex.getMessage());
 
-        return new ResponseEntity<>(body, ex.getStatus());
+        return ResponseEntity
+                .status(ex.getStatus())
+                .body(body);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleException(Exception ex) {
+    public ResponseEntity<ApiErrorResponse> handleException(
+            Exception ex
+    ) {
 
         ApiErrorResponse errorResponse = new ApiErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                500,
                 "Internal Server Error",
-                "Something went wrong!"
+                ex.getMessage() != null ? ex.getMessage() : "Something went wrong!"
         );
 
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .internalServerError()
                 .body(errorResponse);
     }
 }

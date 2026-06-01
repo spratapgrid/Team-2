@@ -9,7 +9,7 @@ import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enti
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.SkillDetail;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ExternalCandidateMapper {
@@ -42,7 +42,7 @@ public class ExternalCandidateMapper {
         entity.setSource(dto.getSource());
 
         if (dto.getSkills() != null && !dto.getSkills().isEmpty()) {
-            List<SkillDetail> skills = dto.getSkills()
+            Set<SkillDetail> skills = dto.getSkills()
                     .stream()
                     .map(skillName -> {
                         SkillDetail skill = new SkillDetail();
@@ -50,27 +50,27 @@ public class ExternalCandidateMapper {
                         skill.setCandidate(entity);
                         return skill;
                     })
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
             entity.setSkills(skills);
         }
 
         if (dto.getEducationDetails() != null && !dto.getEducationDetails().isEmpty()) {
-            List<EducationDetail> educationDetails = dto.getEducationDetails()
+            Set<EducationDetail> educationDetails = dto.getEducationDetails()
                     .stream()
                     .map(ExternalCandidateMapper::educationDtoToEntity)
                     .peek(education -> education.setCandidate(entity))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
             entity.setEducationDetails(educationDetails);
         }
 
         if (dto.getCertificationDetails() != null && !dto.getCertificationDetails().isEmpty()) {
-            List<CertificationDetail> certificationDetails = dto.getCertificationDetails()
+            Set<CertificationDetail> certificationDetails = dto.getCertificationDetails()
                     .stream()
                     .map(ExternalCandidateMapper::certificationDtoToEntity)
                     .peek(certification -> certification.setCandidate(entity))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
             entity.setCertificationDetails(certificationDetails);
         }

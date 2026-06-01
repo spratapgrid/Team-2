@@ -1,10 +1,10 @@
-package com.forge.talentAcquisitionEngine.interviewService.offer.service;
+package com.forge.talentAcquisitionEngine.offerService.offer.service;
 
 import com.forge.talentAcquisitionEngine.applicationService.application.entity.Application;
 import com.forge.talentAcquisitionEngine.applicationService.application.repository.ApplicationRepository;
-import com.forge.talentAcquisitionEngine.interviewService.offer.entity.Offer;
-import com.forge.talentAcquisitionEngine.interviewService.offer.enums.Status;
-import com.forge.talentAcquisitionEngine.interviewService.offer.repository.OfferRepository;
+import com.forge.talentAcquisitionEngine.offerService.offer.entity.Offer;
+import com.forge.talentAcquisitionEngine.offerService.offer.enums.Status;
+import com.forge.talentAcquisitionEngine.offerService.offer.repository.OfferRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class OfferServiceImpl implements OfferServiceImpl.OfferService {
+public class OfferServiceImpl implements OfferService {
 
     private final OfferRepository offerRepository;
     private final ApplicationRepository applicationRepository;
@@ -44,8 +44,8 @@ public class OfferServiceImpl implements OfferServiceImpl.OfferService {
         /*
          * Default Status
          */
-        if (offer.getStatus() == null) {
-            offer.setStatus(OfferStatus.DRAFT);
+        if (offer.getOfferStatus() == null) {
+            offer.setOfferStatus(Status.DRAFT);
         }
 
         /*
@@ -166,14 +166,14 @@ public class OfferServiceImpl implements OfferServiceImpl.OfferService {
         /*
          * Business Validation
          */
-        if (offer.getStatus() != OfferStatus.DRAFT) {
+        if (offer.getOfferStatus() != Status.DRAFT) {
 
             throw new IllegalStateException(
                     "Only draft offers can be sent"
             );
         }
 
-        offer.setStatus(OfferStatus.SENT);
+        offer.setOfferStatus(Status.SENT);
 
         return offerRepository.save(offer);
     }
@@ -190,14 +190,14 @@ public class OfferServiceImpl implements OfferServiceImpl.OfferService {
         /*
          * Business Validation
          */
-        if (offer.getStatus() != OfferStatus.SENT) {
+        if (offer.getOfferStatus() != Status.SENT) {
 
             throw new IllegalStateException(
                     "Only sent offers can be accepted"
             );
         }
 
-        offer.setStatus(OfferStatus.ACCEPTED);
+        offer.setOfferStatus(Status.APPROVED);
 
         return offerRepository.save(offer);
     }
@@ -214,14 +214,14 @@ public class OfferServiceImpl implements OfferServiceImpl.OfferService {
         /*
          * Business Validation
          */
-        if (offer.getStatus() != OfferStatus.SENT) {
+        if (offer.getOfferStatus() != Status.SENT) {
 
             throw new IllegalStateException(
                     "Only sent offers can be rejected"
             );
         }
 
-        offer.setStatus(OfferStatus.REJECTED);
+        offer.setOfferStatus(Status.REJECTED);
 
         return offerRepository.save(offer);
     }
@@ -238,14 +238,14 @@ public class OfferServiceImpl implements OfferServiceImpl.OfferService {
         /*
          * Prevent Expiring Accepted Offer
          */
-        if (offer.getStatus() == OfferStatus.ACCEPTED) {
+        if (offer.getOfferStatus() == Status.APPROVED) {
 
             throw new IllegalStateException(
                     "Accepted offer cannot expire"
             );
         }
 
-        offer.setStatus(OfferStatus.EXPIRED);
+        offer.setOfferStatus(Status.EXPIRED);
 
         return offerRepository.save(offer);
     }
