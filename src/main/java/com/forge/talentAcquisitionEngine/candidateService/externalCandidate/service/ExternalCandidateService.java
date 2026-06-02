@@ -3,6 +3,8 @@ package com.forge.talentAcquisitionEngine.candidateService.externalCandidate.ser
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.CandidateResponse;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.dto.ExternalCandidateDto;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.event.CandidateCreatedEvent;
+import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.kafka.CandidateEventProducer;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.mapper.ExternalCandidateMapper;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.repository.ExternalCandidateRepository;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.utility.HashUtil;
@@ -19,13 +21,16 @@ public class ExternalCandidateService {
 
     private final ExternalCandidateRepository externalCandidateRepository;
     private final HashUtil hashUtil;
+    private final CandidateEventProducer candidateEventProducer;
 
     public ExternalCandidateService(
             ExternalCandidateRepository externalCandidateRepository,
-            HashUtil hashUtil
+            HashUtil hashUtil,
+            CandidateEventProducer candidateEventProducer
     ) {
         this.externalCandidateRepository = externalCandidateRepository;
         this.hashUtil = hashUtil;
+        this.candidateEventProducer = candidateEventProducer;
     }
 
     @Transactional
@@ -67,7 +72,19 @@ public class ExternalCandidateService {
         candidate.setGdprDeleteRequestedAt(null);
         candidate.setGdprDeleteDueAt(null);
 
-        externalCandidateRepository.save(candidate);
+        ExternalCandidate savedCandidate =
+                externalCandidateRepository.save(candidate);
+
+        CandidateCreatedEvent event =
+                CandidateCreatedEvent.builder()
+                        .eventType("candidate.created")
+                        .candidateId(savedCandidate.getCandidateId())
+                        .firstName(savedCandidate.getFirstName())
+                        .lastName(savedCandidate.getLastName())
+                        .email(savedCandidate.getEmail())
+                        .build();
+
+        candidateEventProducer.publishCandidateCreatedEvent(event);
 
         return CandidateResponse.builder()
                 .status(HttpStatus.CREATED.value())
