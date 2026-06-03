@@ -1,4 +1,4 @@
-package com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.model;
+package com.forge.talentAcquisitionEngine.candidateService.resumeParser.model;
 
 
 public record EducationDTO(

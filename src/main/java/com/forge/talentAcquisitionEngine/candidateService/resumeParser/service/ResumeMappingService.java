@@ -1,9 +1,9 @@
-package com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.service;
+package com.forge.talentAcquisitionEngine.candidateService.resumeParser.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.model.EducationDTO;
-import com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.model.ParsedResumeDTO;
-import com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.model.WorkExperienceDTO;
+import com.forge.talentAcquisitionEngine.candidateService.resumeParser.model.EducationDTO;
+import com.forge.talentAcquisitionEngine.candidateService.resumeParser.model.ParsedResumeDTO;
+import com.forge.talentAcquisitionEngine.candidateService.resumeParser.model.WorkExperienceDTO;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
