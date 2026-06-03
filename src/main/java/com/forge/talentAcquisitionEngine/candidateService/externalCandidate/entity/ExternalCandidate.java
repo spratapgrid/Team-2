@@ -81,6 +81,12 @@ public class ExternalCandidate {
     @Column(name = "total_experience_years")
     private Float totalExperienceYears;
 
+    @Valid
+    @OneToMany(mappedBy = "candidate",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<SocialLinks> socialLinks = new HashSet<>();
+
     @DecimalMin(value = "0.0")
     @Column(name = "total_gap_years")
     private Float totalGapYears;

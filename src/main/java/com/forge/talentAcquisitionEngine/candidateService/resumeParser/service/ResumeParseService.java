@@ -1,6 +1,6 @@
-package com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.service;
+package com.forge.talentAcquisitionEngine.candidateService.resumeParser.service;
 
-import com.forge.talentAcquisitionEngine.candidateService.resumeParser.aiengine.model.ParsedResumeDTO;
+import com.forge.talentAcquisitionEngine.candidateService.resumeParser.model.ParsedResumeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
