@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.forge.talentAcquisitionEngine.applicationService.application.enums.Stage;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.entity.ExternalCandidate;
 import com.forge.talentAcquisitionEngine.candidateService.externalCandidate.enums.Source;
-//import com.forge.talentAcquisitionEngine.demandService.demand.entity.Demand;
 import com.forge.talentAcquisitionEngine.interviewService.interview.entity.Interview;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,7 +55,7 @@ public class Application {
 
     @NotBlank(message = "Original resume filename is required")
     @Size(max = 255, message = "Original filename must not exceed 255 characters")
-    @Column(name = "resume_original_filename", nullable = false, length = 255)
+    @Column(name = "resume_original_filename", nullable = false)
     private String resumeOriginalFilename;
 
 

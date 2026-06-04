@@ -72,10 +72,9 @@ public class ExternalCandidate {
     @Column(name = "gender", nullable = false, length = 20)
     private String gender;
 
-    @NotBlank(message = "Address is required")
-    @Size(max = 500)
-    @Column(name = "address", nullable = false, columnDefinition = "TEXT")
-    private String address;
+    @Valid
+    @OneToOne(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Address address;
 
     @DecimalMin(value = "0.0")
     @Column(name = "total_experience_years")
@@ -96,13 +95,9 @@ public class ExternalCandidate {
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SkillDetail> skills = new HashSet<>();
 
-    @Size(max = 100)
-    @Column(name = "company_name", length = 100)
-    private String companyName;
-
-    @Size(max = 100)
-    @Column(name = "designation", length = 100)
-    private String designation;
+    @Valid
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ExperienceDetail experienceDetail;
 
     @Min(value = 0)
     @Column(name = "current_ctc")
